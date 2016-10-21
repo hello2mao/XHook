@@ -1,0 +1,5 @@
+1.Hook Android Native（暂时未利用）
+app/src/main/jni
+参考 https://github.com/crmulliner/adbi
+
+
