@@ -1,99 +1,162 @@
-#include "hooks/util.h"
-#include "base/util.h"
-#include "com_mhb_xhook_util_NativeEntry.h"
-
 #include <jni.h>
 #include <stdio.h>
 #include <dlfcn.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-
-
-char* lib_path = "/data/data/com.mhb.xhook/lib/libxhooknative.so";
+#include "config.h"
+#include "hooks/util.h"
+#include "base/util.h"
 
 LIB_HOOK_INFO_NODE* custom_lib_hook_info_root = NULL;
 HOOKED_INFO_NODE* hooked_info_root = NULL;
+jmethodID mid;
+jclass objclass;
+jobject mobj;
+JavaVM *m_vm;
+char hook_func_list[MAX_HOOK_FUNC_LEN][MAX_HOOK_INFO_LEN] = {}; // increase/decrease if necessary
 
-JNIEXPORT jstring JNICALL Java_com_mhb_xhook_util_NativeEntry_initSystemNativeHook( JNIEnv* env, jclass this )
-{
-    LIB_HOOK_INFO_NODE* lib_hook_info_root = build_hook_info_list(lib_path, "system_hook_info");
-    if(lib_hook_info_root == NULL){
-        LOGD("Build system hook info list failed");
-        return;
-    }
+int get_android_version(const char *s);
+bool init_hook_func_list(const char *ver);
+void print_hook_func_list();
 
-    LIB_HOOK_INFO_NODE* lib_hook_info_node = lib_hook_info_root->next;
-    void* handler = dlopen(lib_path, RTLD_LAZY);
-    if(handler == NULL){
-        LOGD("dlopen %s failed", lib_path);
-        return;
-    }
 
-    while(lib_hook_info_node != NULL){
-        char* hook_info_name = lib_hook_info_node->hook_info_name;
-        void* tmp_hook_info = dlsym(handler, hook_info_name);
-        HOOK_INFO* hook_info;
-        hook_info = (HOOK_INFO*) tmp_hook_info;
-        if(hook_info != NULL){
-            LOGD("Try to hook %s in lib %s", hook_info->funcname, hook_info->libname);
-            if(hook(&(hook_info->eph), getpid(), hook_info->libname, hook_info->funcname,
-                hook_info->hook_arm, hook_info->hook_thumb))
-                LOGD("Hooked %s in lib %s", hook_info->funcname, hook_info->libname);
-        }
-        lib_hook_info_node = lib_hook_info_node->next;
+// 初始化的时候会调进来一次，在这个方法里持有jvm的引用
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    LOGD("NetworkLib JNI_OnLoad");
+    m_vm=vm;
+    JNIEnv *env = NULL;
+    jint result = -1;
+    if (vm == NULL) {
+        LOGE("xhook native init failed due to vm is NULL");
+    } else if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
+        return result;
     }
-    return (*env)->NewStringUTF(env,"initSystemNativeHook sucess");
+    return JNI_VERSION_1_4;
 }
 
-JNIEXPORT jstring JNICALL Java_com_mhb_xhook_util_NativeEntry_initCustomNativeHook(JNIEnv* env, jclass this, jstring lib_name){
-    const char* lib_name_native = (*env)->GetStringUTFChars(env, lib_name, 0);
-    if(custom_lib_hook_info_root == NULL)
-        custom_lib_hook_info_root = build_hook_info_list(lib_path, "custom_hook_info");
+// 当动态库被卸载时这个函数被系统调用
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved) {
+    LOGD("NetworkLib JNI_OnUnload");
+}
 
-    if(custom_lib_hook_info_root == NULL){
-        LOGD("Build custom hook info list failed");
+/**
+ * JNI native 接口，初始化NetworkLib
+ * path：lib path
+ */
+JNIEXPORT void JNICALL Java_com_mhb_xhook_networklib_NetworkLibInit_initNativeHook(
+    JNIEnv *env,
+    jobject object,
+    jstring path,
+    jstring release) {
+
+    const char *lib_path = (*env)->GetStringUTFChars(env, path, 0);
+    const char *rel = (*env)->GetStringUTFChars(env, release, 0);
+    LOGD("Init Network Lib, path=%s, release=%s\n", lib_path, rel);
+
+    bool ret = init_hook_func_list(rel);
+    if (!ret) {
+        LOGE("Recently, not support android %s\n", rel);
         return;
     }
 
-    if(hooked_info_root == NULL){
-        hooked_info_root = (HOOKED_INFO_NODE*) malloc(sizeof(HOOKED_INFO_NODE));
-        if(hooked_info_root != NULL)
-            hooked_info_root->next = NULL;
-    }
-
-    if(hooked_info_root == NULL){
-        LOGD("Build custom hooked info list failed");
+//    LIB_HOOK_INFO_NODE* lib_hook_info_root = build_hook_info_list_v1(lib_path, "system_hook_info");
+    LIB_HOOK_INFO_NODE* lib_hook_info_root = build_hook_info_list_v2(lib_path, hook_func_list);
+    if (lib_hook_info_root == NULL) {
+        LOGE("Build system hook info list failed");
         return;
     }
-
-    LIB_HOOK_INFO_NODE* lib_hook_info_node = custom_lib_hook_info_root->next;
-    void* handler = dlopen(lib_path, RTLD_LAZY);
-    if(handler == NULL){
-        LOGD("dlopen %s failed ", lib_path);
+    LIB_HOOK_INFO_NODE *lib_hook_info_node = lib_hook_info_root->next;
+    void *handler = dlopen(lib_path, RTLD_LAZY);
+    if (handler == NULL) {
+        LOGE("dlopen %s failed", lib_path);
         return;
     }
-
-    while(lib_hook_info_node != NULL){
-        char* hook_info_name = lib_hook_info_node->hook_info_name;
-        void* tmp_hook_info = dlsym(handler, hook_info_name);
-        HOOK_INFO* hook_info;
-        hook_info = (HOOK_INFO*) tmp_hook_info;
-        if(hook_info != NULL && !strncmp(hook_info->libname, lib_name_native, strlen(lib_name_native))){
-            if(!is_func_hooked(hooked_info_root, *hook_info)){
-                LOGD("Try to hook %s in lib %s", hook_info->funcname, hook_info->libname);
-                if(hook(&(hook_info->eph), getpid(), hook_info->libname, hook_info->funcname,
-                        hook_info->hook_arm, hook_info->hook_thumb)){
-                    LOGD("Hooked %s in lib %s", hook_info->funcname, hook_info->libname);
-                    add_hooked_info(hooked_info_root, *hook_info);
-                }
+    while (lib_hook_info_node != NULL) {
+        char *hook_info_name = lib_hook_info_node->hook_info_name;
+        // 根据动态链接库操作句柄与符号，返回符号对应的地址
+        void *tmp_hook_info = dlsym(handler, hook_info_name);
+        HOOK_INFO *hook_info;
+        hook_info = (HOOK_INFO *) tmp_hook_info;
+        if (hook_info != NULL) {
+            // 修改函数来完成hook的目的
+            if(hook(&(hook_info->eph),
+                    getpid(),
+                    hook_info->libname,
+                    hook_info->funcname,
+                    hook_info->hook_arm,
+                    hook_info->hook_thumb)) {
+                LOGD("Hooked %s in lib %s", hook_info->funcname, hook_info->libname);
+            } else {
+                LOGE("Try to hook %s in lib %s failed!", hook_info->funcname, hook_info->libname);
             }
         }
         lib_hook_info_node = lib_hook_info_node->next;
     }
-    return (*env)->NewStringUTF(env,"initCustomNativeHook sucess");
 
+    //这种写法可以用在子线程中
+    objclass = (*env)->GetObjectClass(env, object);
+    mid = (*env)->GetMethodID(env, objclass,
+                              "callback",
+                              "(IIDIIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
+
+    // JNI函数参数中 jobject或者它的子类，其参数都是 local reference。
+    // Local reference 只在这个 JNI函数中有效，JNI函数返回后，引用的对象就被释放，它的生命周期就结束了。
+    // 若要留着日后使用，则需根据这个 local reference创建global reference。
+    // Global reference不会被系统自动释放，它仅当被程序明确调用DeleteGlobalReference时才被回收。JNI多线程机制）
+    mobj=(*env)->NewGlobalRef(env, object);
+    LOGI("APM NetworkLib init success");
 }
 
+int get_android_version(const char *s) {
+    if (!strncmp(s, "4.4", 3)) {
+        return ANDROID_4_4;
+    }
+    if (!strncmp(s, "4.3", 3)) {
+        return ANDROID_4_3;
+    }
+    return ANDROID_NOT_SUPPORT;
+}
+
+bool init_hook_func_list(const char *ver) {
+    int num = get_android_version(ver);
+    switch (num) {
+        case ANDROID_4_3:
+            // TODO:
+            strcpy(hook_func_list[0], "hook_info_getaddrinfo");
+            strcpy(hook_func_list[1], "hook_info_socket");
+            strcpy(hook_func_list[2], "hook_info_connect");
+            strcpy(hook_func_list[3], "hook_info_poll");
+            strcpy(hook_func_list[4], "hook_info_recvfrom");
+            strcpy(hook_func_list[5], "hook_info_sendto");
+            strcpy(hook_func_list[6], "hook_info_SSL_do_handshake");
+            break;
+        case ANDROID_4_4:
+            // TODO:
+            strcpy(hook_func_list[0], "hook_info_getaddrinfo");
+            strcpy(hook_func_list[1], "hook_info_socket");
+            strcpy(hook_func_list[2], "hook_info_connect");
+            strcpy(hook_func_list[3], "hook_info_poll");
+            strcpy(hook_func_list[4], "hook_info_recvfrom");
+            strcpy(hook_func_list[5], "hook_info_sendto");
+            strcpy(hook_func_list[6], "hook_info_SSL_do_handshake");
+            break;
+        case ANDROID_NOT_SUPPORT:
+            return false;
+        default:
+            return false;
+    }
+    return true;
+}
+
+void print_hook_func_list() {
+    char (*temp)[MAX_HOOK_INFO_LEN];
+    temp = hook_func_list;
+    while (strlen(temp) != 0) {
+        LOGD("hook_func: %s", temp);
+        temp++;
+    }
+}
 
 

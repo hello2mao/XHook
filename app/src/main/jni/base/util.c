@@ -1,15 +1,3 @@
-/*
- * Elf parsing code taken from: hijack.c (for x86)
- * by Victor Zandy <zandy[at]cs.wisc.edu>
- *
- * Elf parsing code slightly modified for this project
- * (c) Collin Mulliner <collin[at]mulliner.org>
- *
- * License: LGPL v2.1
- *  
- * Termios code taken from glibc with slight modifications for this project
- * 
- */
 #define _XOPEN_SOURCE 500
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,25 +38,22 @@ struct symtab {
     struct symlist *dyn;   /* dynamic symbols */
 };
 
-static void* xmalloc(size_t size)
-{
+static void *xmalloc(size_t size) {
     void *p;
     p = malloc(size);
     if (!p) {
-        log("Out of memory\n");
+        LOGE("Out of memory\n");
         exit(1);
     }
     return p;
 }
 
-static int my_pread(int fd, void *buf, size_t count, off_t offset)
-{
+static int my_pread(int fd, void *buf, size_t count, off_t offset) {
     lseek(fd, offset, SEEK_SET);
     return read(fd, buf, count);
 }
 
-static struct symlist* get_syms(int fd, Elf32_Shdr *symh, Elf32_Shdr *strh)
-{
+static struct symlist* get_syms(int fd, Elf32_Shdr *symh, Elf32_Shdr *strh) {
     struct symlist *sl, *ret;
     int rv;
 
@@ -113,8 +98,8 @@ out:
     return ret;
 }
 
-static int do_load(int fd, symtab_t symtab)
-{
+// 通过解析指定库ELF文件中的“.symtab”或者“.dynsym”节，就可以获得库中所有的符号信息
+static int do_load(int fd, symtab_t symtab) {
     int rv;
     size_t size;
     Elf32_Ehdr ehdr;
@@ -128,19 +113,19 @@ static int do_load(int fd, symtab_t symtab)
     /* elf header */
     rv = read(fd, &ehdr, sizeof(ehdr));
     if (0 > rv) {
-        log("read\n")
+        LOGE("read error\n");
         goto out;
     }
     if (rv != sizeof(ehdr)) {
-        log("elf error 1\n")
+        LOGE("elf error 1\n");
         goto out;
     }
     if (strncmp(ELFMAG, ehdr.e_ident, SELFMAG)) { /* sanity */
-        log("not an elf\n")
+        LOGE("not an elf\n");
         goto out;
     }
     if (sizeof(Elf32_Shdr) != ehdr.e_shentsize) { /* sanity */
-        log("elf error 2\n")
+        LOGE("elf error 2\n");
         goto out;
     }
 
@@ -149,11 +134,11 @@ static int do_load(int fd, symtab_t symtab)
     shdr = (Elf32_Shdr *) xmalloc(size);
     rv = my_pread(fd, shdr, size, ehdr.e_shoff);
     if (0 > rv) {
-        log("read\n")
+        LOGE("read error\n");
         goto out;
     }
     if (rv != size) {
-        log("elf error 3 %d %d\n", rv, size)
+        LOGE("elf error 3 %d %d\n", rv, size);
         goto out;
     }
 
@@ -162,11 +147,11 @@ static int do_load(int fd, symtab_t symtab)
     shstrtab = (char *) xmalloc(size);
     rv = my_pread(fd, shstrtab, size, shdr[ehdr.e_shstrndx].sh_offset);
     if (0 > rv) {
-        log("read\n")
+        LOGE("read error\n");
         goto out;
     }
     if (rv != size) {
-        log("elf error 4 %d %d\n", rv, size)
+        LOGE("elf error 4 %d %d\n", rv, size);
         goto out;
     }
 
@@ -176,72 +161,73 @@ static int do_load(int fd, symtab_t symtab)
     for (i = 0, p = shdr; i < ehdr.e_shnum; i++, p++)
         if (SHT_SYMTAB == p->sh_type) {
             if (symh) {
-                log("too many symbol tables\n")
+                LOGE("too many symbol tables\n");
                 goto out;
             }
             symh = p;
         } else if (SHT_DYNSYM == p->sh_type) {
             if (dynsymh) {
-                log("too many symbol tables\n")
+                LOGE("too many symbol tables\n");
                 goto out;
             }
             dynsymh = p;
         } else if (SHT_STRTAB == p->sh_type
                && !strncmp(shstrtab+p->sh_name, ".strtab", 7)) {
             if (strh) {
-                log("too many string tables\n")
+                LOGE("too many string tables\n");
                 goto out;
             }
             strh = p;
         } else if (SHT_STRTAB == p->sh_type
                && !strncmp(shstrtab+p->sh_name, ".dynstr", 7)) {
             if (dynstrh) {
-                log("too many string tables\n")
+                LOGE("too many string tables\n");
                 goto out;
             }
             dynstrh = p;
         }
     /* sanity checks */
     if ((!dynsymh && dynstrh) || (dynsymh && !dynstrh)) {
-        log("bad dynamic symbol table\n")
+        LOGE("bad dynamic symbol table\n");
         goto out;
     }
     if ((!symh && strh) || (symh && !strh)) {
-        log("bad symbol table\n")
+        LOGE("bad symbol table\n");
         goto out;
     }
     if (!dynsymh && !symh) {
-        log("no symbol table\n")
+        LOGE("no symbol table\n");
         goto out;
     }
 
     /* symbol tables */
-    if (dynsymh)
+    if (dynsymh) {
         symtab->dyn = get_syms(fd, dynsymh, dynstrh);
-    if (symh)
+    }
+    if (symh) {
         symtab->st = get_syms(fd, symh, strh);
+    }
     ret = 0;
-out:
-    free(shstrtab);
-    free(shdr);
+    out:
+        free(shstrtab);
+        free(shdr);
     return ret;
 }
 
-static symtab_t load_symtab(char *filename)
-{
+static symtab_t load_symtab(char *filename) {
     int fd;
     symtab_t symtab;
 
     symtab = (symtab_t) xmalloc(sizeof(*symtab));
     memset(symtab, 0, sizeof(*symtab));
-
     fd = open(filename, O_RDONLY);
     if (0 > fd) {
-        log("%s open\n", __func__);
+        LOGE("%s open failed!\n", __func__);
         return NULL;
     }
+    // 通过解析指定库ELF文件中的“.symtab”或者“.dynsym”节，就可以获得库中所有的符号信息
     if (0 > do_load(fd, symtab)) {
-        log("Error ELF parsing %s\n", filename)
+        LOGE("Error ELF parsing %s\n", filename);
         free(symtab);
         symtab = NULL;
     }
@@ -249,9 +235,10 @@ static symtab_t load_symtab(char *filename)
     return symtab;
 }
 
-static int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
-{
-    char raw[80000]; // increase this if needed for larger "maps"
+static int load_memmap(pid_t pid, struct mm *mm, int *nmmp) {
+    // modify by mhb, default char raw[80000]
+    // TODO:
+    char raw[240000]; // increase this if needed for larger "maps"
     char name[MAX_NAME_LEN];
     char *p;
     unsigned long start, end;
@@ -263,7 +250,7 @@ static int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
     sprintf(raw, "/proc/%d/maps", pid);
     fd = open(raw, O_RDONLY);
     if (0 > fd) {
-        //printf("Can't open %s for reading\n", raw);
+        LOGE("Can't open %s for reading\n", raw);
         return -1;
     }
 
@@ -272,16 +259,17 @@ static int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 
     p = raw;
     while (1) {
-        rv = read(fd, p, sizeof(raw)-(p-raw));
+        rv = read(fd, p, sizeof(raw) - (p - raw));
         if (0 > rv) {
-            //perror("read");
+            LOGE("read error");
             return -1;
         }
-        if (0 == rv)
+        if (0 == rv) {
             break;
+        }
         p += rv;
-        if (p-raw >= sizeof(raw)) {
-            //printf("Too many memory mapping\n");
+        if (p - raw >= sizeof(raw)) {
+            LOGD("Too many memory mapping\n");
             return -1;
         }
     }
@@ -291,11 +279,8 @@ static int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
     m = mm;
     while (p) {
         /* parse current map line */
-        rv = sscanf(p, "%08lx-%08lx %*s %*s %*s %*s %s\n",
-                &start, &end, name);
-
+        rv = sscanf(p, "%08lx-%08lx %*s %*s %*s %*s %s\n", &start, &end, name);
         p = strtok(NULL, "\n");
-
         if (rv == 2) {
             m = &mm[nmm++];
             m->start = start;
@@ -307,15 +292,18 @@ static int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
         /* search backward for other mapping with same name */
         for (i = nmm-1; i >= 0; i--) {
             m = &mm[i];
-            if (!strcmp(m->name, name))
+            if (!strcmp(m->name, name)) {
                 break;
+            }
         }
 
         if (i >= 0) {
-            if (start < m->start)
+            if (start < m->start) {
                 m->start = start;
-            if (end > m->end)
+            }
+            if (end > m->end) {
                 m->end = end;
+            }
         } else {
             /* new entry */
             m = &mm[nmm++];
@@ -324,7 +312,6 @@ static int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
             strcpy(m->name, name);
         }
     }
-
     *nmmp = nmm;
     return 0;
 }
@@ -334,49 +321,55 @@ static int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
    address.  If libc cannot be found return -1 and
    leave NAME and START untouched.  Otherwise return 0
    and null-terminated NAME. */
-static int find_libname(char *libn, char *name, int len, unsigned long *start, struct mm *mm, int nmm)
-{
+// why libc: may copy from hijiack.c
+static int find_libname(char *libn, char *name, int len, unsigned long *start,
+                        struct mm *mm, int nmm) {
     int i;
     struct mm *m;
     char *p;
     for (i = 0, m = mm; i < nmm; i++, m++) {
-        if (!strcmp(m->name, MEMORY_ONLY))
+        if (!strcmp(m->name, MEMORY_ONLY)) {
             continue;
+        }
         p = strrchr(m->name, '/');
-        if (!p)
+        if (!p) {
             continue;
+        }
         p++;
-        if (strncmp(libn, p, strlen(libn)))
+        if (strncmp(libn, p, strlen(libn))) {
             continue;
+        }
         p += strlen(libn);
 
         /* here comes our crude test -> 'libc.so' or 'libc-[0-9]' */
-        if (!strncmp("so", p, 2) || 1) // || (p[0] == '-' && isdigit(p[1])))
+        // TODO: BUG need fix -- mhb
+        if (!strncmp("so", p, 2) || 1) { // || (p[0] == '-' && isdigit(p[1])))
             break;
+        }
     }
-    if (i >= nmm)
+    if (i >= nmm) {
         /* not found */
         return -1;
-
+    }
     *start = m->start;
     strncpy(name, m->name, len);
-    if (strlen(m->name) >= len)
+    if (strlen(m->name) >= len) {
         name[len-1] = '\0';
-
+    }
+    // 用mprotect()函数，修改该库内存段的属性，加上可写（PROT_WRITE）属性
     mprotect((void*)m->start, m->end - m->start, PROT_READ|PROT_WRITE|PROT_EXEC);
     return 0;
 }
 
 static int lookup2(struct symlist *sl, unsigned char type,
-    char *name, unsigned long *val)
-{
+    char *name, unsigned long *val) {
     Elf32_Sym *p;
     int len;
     int i;
 
     len = strlen(name);
     for (i = 0, p = sl->sym; i < sl->num; i++, p++) {
-        //log("name: %s %x\n", sl->str+p->st_name, p->st_value)
+        //LOGD("name: %s %x\n", sl->str+p->st_name, p->st_value);
         if (!strncmp(sl->str+p->st_name, name, len) && *(sl->str+p->st_name+len) == 0
             && ELF32_ST_TYPE(p->st_info) == type) {
             //if (p->st_value != 0) {
@@ -389,68 +382,120 @@ static int lookup2(struct symlist *sl, unsigned char type,
 }
 
 static int lookup_sym(symtab_t s, unsigned char type,
-       char *name, unsigned long *val)
-{
-    if (s->dyn && !lookup2(s->dyn, type, name, val))
+       char *name, unsigned long *val) {
+    if (s->dyn && !lookup2(s->dyn, type, name, val)) {
         return 0;
-    if (s->st && !lookup2(s->st, type, name, val))
+    }
+    if (s->st && !lookup2(s->st, type, name, val)) {
         return 0;
+    }
     return -1;
 }
 
-static int lookup_func_sym(symtab_t s, char *name, unsigned long *val)
-{
+static int lookup_func_sym(symtab_t s, char *name, unsigned long *val) {
     return lookup_sym(s, STT_FUNC, name, val);
 }
 
-static void append_hook_info_node(LIB_HOOK_INFO_NODE* root, char* hook_info_name)
-{
-    LIB_HOOK_INFO_NODE *temp,*right;
+static void append_hook_info_node(LIB_HOOK_INFO_NODE *root, char *hook_info_name) {
+    LIB_HOOK_INFO_NODE *temp, *right;
     temp = (LIB_HOOK_INFO_NODE *) malloc(sizeof(LIB_HOOK_INFO_NODE));
     temp->hook_info_name = hook_info_name;
     right = root;
-    while(right->next != NULL)
+    while(right->next != NULL) {
         right = right->next;
+    }
     right->next = temp;
     right = temp;
     right->next = NULL;
-    log("hook info node: %s", hook_info_name);
+    LOGD("Hook info node: %s", hook_info_name);
 }
 
-static void lookup_hook_infos(struct symlist* sl, unsigned char type, char* condition, LIB_HOOK_INFO_NODE* root){
-    Elf32_Sym* p;
+// 从符号表中，找到指定名称的符号，并返回其数值
+static void lookup_hook_infos_v1(struct symlist *sl, unsigned char type, char *condition,
+                              LIB_HOOK_INFO_NODE *root) {
+    Elf32_Sym *p;
     int i = 0;
-    for(i=0, p = sl->sym; i < sl->num; i++, p++){
-        char* sym_name = sl->str+p->st_name;
-        if(ELF32_ST_TYPE(p->st_info) == type && !strncmp(sym_name, condition, strlen(condition)))
+    for (i=0, p = sl->sym; i < sl->num; i++, p++) {
+        char *sym_name = sl->str + p->st_name;
+        if (ELF32_ST_TYPE(p->st_info) == type && !strncmp(sym_name, condition, strlen(condition))) {
             append_hook_info_node(root, sym_name);
-
+        }
     }
 }
 
-LIB_HOOK_INFO_NODE* build_hook_info_list(char* filepath, char* condition){
-    LIB_HOOK_INFO_NODE* root = (LIB_HOOK_INFO_NODE*) malloc(sizeof(LIB_HOOK_INFO_NODE));
-    if(root == NULL)
+// 根据condition匹配 -- v1
+LIB_HOOK_INFO_NODE *build_hook_info_list_v1(char *filepath, char *condition) {
+    LIB_HOOK_INFO_NODE *root = (LIB_HOOK_INFO_NODE *) malloc(sizeof(LIB_HOOK_INFO_NODE));
+    if(root == NULL) {
+        LOGE("malloc space for build_hook_info_list failed!");
         return root;
-
+    }
     root->hook_info_name = NULL;
     root->next = NULL;
-
+    // 获得libxhooknative.so库中所有的符号信息
     symtab_t s = load_symtab(filepath);
-    if(!s){
-        log("cannot read symbol table\n");
+    if (!s) {
+        LOGE("cannot read symbol table\n");
         return root;
     }
-
-    if (s->dyn)
-        lookup_hook_infos(s->dyn, STT_OBJECT, condition, root);
-    if (s->st)
-        lookup_hook_infos(s->st, STT_OBJECT, condition, root);
+    // 从符号表中，找到指定名称的符号，并返回其数值，这里的指定名称就是condition*
+    // 这里查到的符号值其实就是要找的那个函数/静态变量的起始地址相对于整个库的起始地址的偏移
+    if (s->dyn) {
+        lookup_hook_infos_v1(s->dyn, STT_OBJECT, condition, root);
+    }
+    if (s->st) {
+        lookup_hook_infos_v1(s->st, STT_OBJECT, condition, root);
+    }
     return root;
 }
 
-int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
-{
+// 从符号表中，找到指定名称的符号，并返回其数值
+static void lookup_hook_infos_v2(struct symlist *sl, unsigned char type, char *condition,
+                                 LIB_HOOK_INFO_NODE *root) {
+    Elf32_Sym *p;
+    int i = 0;
+    for (i=0, p = sl->sym; i < sl->num; i++, p++) {
+        char *sym_name = sl->str + p->st_name;
+        if (ELF32_ST_TYPE(p->st_info) == type && !strncmp(sym_name, condition, strlen(condition))) {
+            append_hook_info_node(root, sym_name);
+            return;
+        }
+    }
+}
+
+// 精准构造 -- v2
+LIB_HOOK_INFO_NODE *build_hook_info_list_v2(const char *filepath, char **condition_list) {
+    LIB_HOOK_INFO_NODE *root = (LIB_HOOK_INFO_NODE *) malloc(sizeof(LIB_HOOK_INFO_NODE));
+    if(root == NULL) {
+        LOGE("malloc space for build_hook_info_list failed!");
+        return root;
+    }
+    root->hook_info_name = NULL;
+    root->next = NULL;
+    // 获得libxhooknative.so库中所有的符号信息
+    symtab_t s = load_symtab(filepath);
+    if (!s) {
+        LOGE("cannot read symbol table\n");
+        return root;
+    }
+    // 从符号表中，找到指定名称的符号，并返回其数值，这里的指定名称就是condition*
+    // 这里查到的符号值其实就是要找的那个函数/静态变量的起始地址相对于整个库的起始地址的偏移
+    char (*current_condition)[MAX_HOOK_INFO_LEN];
+    current_condition = condition_list;
+    while (strlen(current_condition) != 0) {
+        if (s->dyn) {
+            lookup_hook_infos_v2(s->dyn, STT_OBJECT, current_condition, root);
+        }
+        if (s->st) {
+            lookup_hook_infos_v2(s->st, STT_OBJECT, current_condition, root);
+        }
+        current_condition++;
+    }
+    return root;
+}
+
+// 找到hook函数在内存中的位置
+int find_name(pid_t pid, char *name, char *libn, unsigned long *addr) {
     struct mm mm[1000];
     unsigned long libcaddr;
     int nmm;
@@ -459,7 +504,7 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
 
     // 读取并解析完宿主进程的内存映射信息
     if (0 > load_memmap(pid, mm, &nmm)) {
-        log("cannot read memory map\n")
+        LOGE("cannot read memory map\n");
         return -1;
     }
 
@@ -467,19 +512,19 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
     // 如果有名字则从名字字符串后面往前找第一个“/”，并将这个字符之后的子字符串和要查找的库名进行比较。
     // 如果一样的话，证明找到了，退出循环；如果不一样的话，说明没找到就继续找。
     if (0 > find_libname(libn, libc, sizeof(libc), &libcaddr, mm, nmm)) {
-        log("cannot find lib: %s\n", libn)
+        LOGE("cannot find lib: %s\n", libn);
         return -1;
     }
-    //log("lib: >%s<\n", libc)
+    LOGD("lib: >%s<\n", libc);
     // 符号表解析
     s = load_symtab(libc);
     if (!s) {
-        log("cannot read symbol table\n");
+        LOGE("cannot read symbol table\n");
         return -1;
     }
     // 从符号表中，找到指定名称的符号，并返回其数值
     if (0 > lookup_func_sym(s, name, addr)) {
-        log("cannot find function: %s\n", name);
+        LOGE("cannot find function: %s\n", name);
         return -1;
     }
     // 函数的地址就是库的起始地址，加上函数名符号的值
@@ -487,8 +532,7 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
     return 0;
 }
 
-int find_libbase(pid_t pid, char *libn, unsigned long *addr)
-{
+int find_libbase(pid_t pid, char *libn, unsigned long *addr) {
     struct mm mm[1000];
     unsigned long libcaddr;
     int nmm;
@@ -496,157 +540,13 @@ int find_libbase(pid_t pid, char *libn, unsigned long *addr)
     symtab_t s;
 
     if (0 > load_memmap(pid, mm, &nmm)) {
-        log("cannot read memory map\n")
+        LOGE("cannot read memory map\n");
         return -1;
     }
     if (0 > find_libname(libn, libc, sizeof(libc), &libcaddr, mm, nmm)) {
-        log("cannot find lib\n");
+        LOGE("cannot find lib\n");
         return -1;
     }
     *addr = libcaddr;
     return 0;
 }
-
-// --------------------------------------------------------------
-#if 0
-
-# define IBAUD0 0
-
-/* Set *T to indicate raw mode. */
-void cfmakeraw (struct termios *t)
-    {
-      t->c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
-      t->c_oflag &= ~OPOST;
-      t->c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
-      t->c_cflag &= ~(CSIZE|PARENB);
-      t->c_cflag |= CS8;
-      t->c_cc[VMIN] = 1; /* read returns when one char is available. */
-      t->c_cc[VTIME] = 0;
-    }
-#define __KERNEL_NCCS 19
-struct __kernel_termios
-    {
-        tcflag_t c_iflag; /* input mode flags */
-        tcflag_t c_oflag; /* output mode flags */
-        tcflag_t c_cflag; /* control mode flags */
-        tcflag_t c_lflag; /* local mode flags */
-        cc_t c_line; /* line discipline */
-    cc_t c_cc[__KERNEL_NCCS]; /* control characters */
-    };
-
-
-/* Set the state of FD to *TERMIOS_P. */
-int tcsetattr (int fd, int optional_actions, const struct termios *termios_p)
-    {
-        struct __kernel_termios k_termios;
-        unsigned long int cmd;
-        int retval;
-
-        switch (optional_actions)
-        {
-        case TCSANOW:
-            cmd = TCSETS;
-            break;
-        case TCSADRAIN:
-            cmd = TCSETSW;
-            break;
-        case TCSAFLUSH:
-            cmd = TCSETSF;
-            break;
-        default:
-            //__set_errno (EINVAL);
-            return -1;
-        }
-
-        k_termios.c_iflag = termios_p->c_iflag & ~IBAUD0;
-        k_termios.c_oflag = termios_p->c_oflag;
-        k_termios.c_cflag = termios_p->c_cflag;
-        k_termios.c_lflag = termios_p->c_lflag;
-        k_termios.c_line = termios_p->c_line;
-    #ifdef _HAVE_C_ISPEED
-    k_termios.c_ispeed = termios_p->c_ispeed;
-    #endif
-    #ifdef _HAVE_C_OSPEED
-        k_termios.c_ospeed = termios_p->c_ospeed;
-    #endif
-        memcpy (&k_termios.c_cc[0], &termios_p->c_cc[0],
-            __KERNEL_NCCS * sizeof (cc_t));
-
-        retval = ioctl (fd, cmd, &k_termios);
-
-        if (retval == 0 && cmd == TCSETS)
-        {
-        /* The Linux kernel has a bug which silently ignore the invalid
-           c_cflag on pty. We have to check it here. */
-        int save = 0; //errno;
-        retval = ioctl (fd, TCGETS, &k_termios);
-        if (retval)
-        {
-            /* We cannot verify if the setting is ok. We don't return
-               an error (?). */
-            //__set_errno (save);
-            retval = 0;
-        }
-        else if ((termios_p->c_cflag & (PARENB | CREAD))
-            != (k_termios.c_cflag & (PARENB | CREAD))
-            || ((termios_p->c_cflag & CSIZE)
-                && ((termios_p->c_cflag & CSIZE)
-                != (k_termios.c_cflag & CSIZE))))
-        {
-            /* It looks like the Linux kernel silently changed the
-               PARENB/CREAD/CSIZE bits in c_cflag. Report it as an
-               error. */
-            //__set_errno (EINVAL);
-            retval = -1;
-        }
-        }
-
-        return retval;
-}
-
-int tcgetattr (int fd, struct termios *termios_p)
-    {
-        struct __kernel_termios k_termios;
-        int retval;
-
-        retval = ioctl (fd, TCGETS, &k_termios);
-        if(retval == 0) {
-            termios_p->c_iflag = k_termios.c_iflag;
-            termios_p->c_oflag = k_termios.c_oflag;
-            termios_p->c_cflag = k_termios.c_cflag;
-            termios_p->c_lflag = k_termios.c_lflag;
-            termios_p->c_line = k_termios.c_line;
-    #ifdef _HAVE_C_ISPEED
-            termios_p->c_ispeed = k_termios.c_ispeed;
-    #endif
-    #ifdef _HAVE_C_OSPEED
-            termios_p->c_ospeed = k_termios.c_ospeed;
-    #endif
-
-
-            if (sizeof (cc_t) == 1 || _POSIX_VDISABLE == 0
-                || (unsigned char) _POSIX_VDISABLE == (unsigned char) -1)
-            {
-            #if 0
-            memset (mempcpy (&termios_p->c_cc[0], &k_termios.c_cc[0],
-                    __KERNEL_NCCS * sizeof (cc_t)),
-                _POSIX_VDISABLE, (NCCS - __KERNEL_NCCS) * sizeof (cc_t));
-            #endif
-            memset ( (memcpy (&termios_p->c_cc[0], &k_termios.c_cc[0],
-                    __KERNEL_NCCS * sizeof (cc_t)) + (__KERNEL_NCCS * sizeof (cc_t))) ,
-                _POSIX_VDISABLE, (NCCS - __KERNEL_NCCS) * sizeof (cc_t));
-
-            } else {
-            size_t cnt;
-
-            memcpy (&termios_p->c_cc[0], &k_termios.c_cc[0],
-                __KERNEL_NCCS * sizeof (cc_t));
-
-            for (cnt = __KERNEL_NCCS; cnt < NCCS; ++cnt)
-                termios_p->c_cc[cnt] = _POSIX_VDISABLE;
-            }
-        }
-
-        return retval;
-    }
-#endif

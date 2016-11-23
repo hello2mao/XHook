@@ -1,31 +1,25 @@
-# Copyright (C) 2009 The Android Open Source Project
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
 LOCAL_PATH := $(call my-dir)
-HOOKS := hooks/hook_socket.c
-
-#include $(CLEAR_VARS)
-#LOCAL_MODULE := base
-#LOCAL_SRC_FILES := libbase.a
-#LOCAL_EXPORT_C_INCLUDES := base
-#include $(PREBUILT_STATIC_LIBRARY)
-
 include $(CLEAR_VARS)
-LOCAL_MODULE    := xhooknative
-LOCAL_SRC_FILES := entry.c find_file_path/fd2path.c hooks/util.c base/hook.c base/util.c $(HOOKS)
-LOCAL_LDLIBS:= -L$(SYSROOT)/usr/lib -llog
-LOCAL_CFLAGS := -g
+
+# TODO:
+HOOKS += hooks/hook_dns.c
+HOOKS += hooks/hook_socket.c
+HOOKS += hooks/hook_connect.c
+HOOKS += hooks/hook_poll.c
+HOOKS += hooks/hook_sendto.c
+HOOKS += hooks/hook_recvfrom.c
+HOOKS += hooks/hook_ssl_do_handshake.c
+
+#LOCAL_ARM_MODE := arm
+LOCAL_MODULE := xhooknative
+LOCAL_SRC_FILES := entry.c base/hook.c base/util.c hooks/util.c report_data/report.c $(HOOKS)
+LOCAL_LDLIBS:= -L$(SYSROOT)/usr/lib -llog -lcrypto -lssl
+LOCAL_CFLAGS := -g -std=gnu99
 LOCAL_SHARED_LIBRARIES := dl
-#LOCAL_STATIC_LIBRARIES := base
+
 include $(BUILD_SHARED_LIBRARY)
+
+
+
+
+

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.mhb.xhook.R;
 import com.mhb.xhook.main.MainActivity;
 
 
@@ -18,7 +17,7 @@ public class AppStart extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("mhb-test", "AppStart -->onCreate");
+        Log.d("test", "AppStart -->onCreate");
 
         // 防止第三方跳转时出现双实例
         // 进入AppManager.class可以发现其实是一个Activity.class实例的管理类.

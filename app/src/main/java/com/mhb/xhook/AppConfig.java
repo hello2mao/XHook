@@ -17,7 +17,7 @@ public class AppConfig {
     private final static String APP_CONFIG = "config";
 
     public final static String CONF_APP_UNIQUEID = "APP_UNIQUEID";
-    public final static String CONF_TAG = "mhb-test";
+    public final static String CONF_TAG = "XHook-log4j";
 
     private Context mContext;
     private static AppConfig appConfig;

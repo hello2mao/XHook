@@ -1,13 +1,20 @@
 package com.mhb.xhook.xposed.launch;
 
 import android.content.pm.ApplicationInfo;
+import android.os.Environment;
+
 import com.mhb.xhook.AppConfig;
 import com.mhb.xhook.xposed.collecter.ModuleContext;
 import com.mhb.xhook.xposed.util.XposedConfig;
+
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+
+import de.mindpipe.android.logging.log4j.LogConfigurator;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**
@@ -32,7 +39,7 @@ public class Launcher implements IXposedHookLoadPackage, IXposedHookZygoteInit {
      */
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        XposedBridge.log("Loaded package: " + lpparam.packageName);
+//        XposedBridge.log("Loaded package: " + lpparam.packageName);
         ApplicationInfo appInfo = lpparam.appInfo;
         if (appInfo == null) {
             return;
@@ -52,12 +59,30 @@ public class Launcher implements IXposedHookLoadPackage, IXposedHookZygoteInit {
         // make sure the main thread of target app
         if ((appInfo.packageName.equals(XposedConfig.getInstance().getHookTargetApp())) &&
                 (lpparam.isFirstApplication)) {
+            initLog4j();
             LOG.info("Hook " + XposedConfig.getInstance().getHookTargetApp() + " start!");
             LOG.info("The package = "+lpparam.packageName +" has hook");
             LOG.info("The app target id = "+android.os.Process.myPid());
             PackageMetaInfo pmInfo = PackageMetaInfo.fromXposed(lpparam);
             ModuleContext.getInstance().initModuleContext(pmInfo);
             HookTarget.hookWhenPackageLoaded();
+
         }
+    }
+
+    /**
+     * Init Log4j
+     */
+    public void initLog4j() {
+        String filePath = Environment.getExternalStorageDirectory()
+                + File.separator + "XHook" + File.separator + "logs";
+        LogConfigurator logConfigurator = new LogConfigurator();
+        logConfigurator.setFileName(filePath + File.separator + "log4j.txt");
+        logConfigurator.setRootLevel(Level.DEBUG);
+        logConfigurator.setLevel("org.apache", Level.ERROR);
+        logConfigurator.setFilePattern("%d %-5p [%c{2}]-[%L] %m%n");
+        logConfigurator.setMaxFileSize(1024 * 1024 * 5);
+        logConfigurator.setImmediateFlush(true);
+        logConfigurator.configure();
     }
 }

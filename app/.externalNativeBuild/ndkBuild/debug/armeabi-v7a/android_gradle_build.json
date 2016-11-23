@@ -1,0 +1,65 @@
+{
+  "buildFiles": [
+    "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/Android.mk",
+    "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/Application.mk"
+  ],
+  "cleanCommands": [
+    "/Users/maohongbin01/Library/Android/sdk/ndk-bundle/ndk-build NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003d/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/Android.mk NDK_APPLICATION_MK\u003d/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDEBUG\u003d1 APP_PLATFORM\u003dandroid-18 NDK_OUT\u003d/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003d/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/build/intermediates/ndkBuild/debug/lib clean"
+  ],
+  "libraries": {
+    "xhooknative-debug-armeabi-v7a": {
+      "buildCommand": "/Users/maohongbin01/Library/Android/sdk/ndk-bundle/ndk-build NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003d/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/Android.mk NDK_APPLICATION_MK\u003d/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDEBUG\u003d1 APP_PLATFORM\u003dandroid-18 NDK_OUT\u003d/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003d/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/build/intermediates/ndkBuild/debug/lib /Users/maohongbin01/workspace/apm_android_sdk/XHook/app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libxhooknative.so",
+      "toolchain": "toolchain-armeabi-v7a",
+      "abi": "armeabi-v7a",
+      "artifactName": "xhooknative",
+      "files": [
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/base/hook.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/base/util.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/entry.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/hooks/hook_connect.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/hooks/hook_dns.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/hooks/hook_poll.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/hooks/hook_socket.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/hooks/util.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni/report_data/report.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        }
+      ],
+      "output": "/Users/maohongbin01/workspace/apm_android_sdk/XHook/app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libxhooknative.so"
+    }
+  },
+  "toolchains": {
+    "toolchain-armeabi-v7a": {
+      "cCompilerExecutable": "/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang"
+    }
+  },
+  "cFileExtensions": [
+    "c"
+  ],
+  "cppFileExtensions": []
+}

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
+#include <sys/time.h>
 #include <errno.h>
 
 //void parse_log_app_uids(const char* log_app_uids){
@@ -130,3 +130,4 @@ void array_to_string(char *dest_string, char *const src_array[]){
     }
 
 }
+

@@ -37,10 +37,10 @@ public class AppContext extends BaseApplication {
         handler.init(this);
 
         // Log
+        String filePath = Environment.getExternalStorageDirectory()
+                + File.separator + "XHook" + File.separator + "logs";
         LogConfigurator logConfigurator = new LogConfigurator();
-        logConfigurator.setFileName(Environment.getExternalStorageDirectory()
-                + File.separator + "XHook" + File.separator + "logs"
-                + File.separator + "log4j.txt");
+        logConfigurator.setFileName(filePath + File.separator + "log4j.txt");
         logConfigurator.setRootLevel(Level.DEBUG);
         logConfigurator.setLevel("org.apache", Level.ERROR);
         logConfigurator.setFilePattern("%d %-5p [%c{2}]-[%L] %m%n");

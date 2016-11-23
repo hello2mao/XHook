@@ -24,13 +24,12 @@ public abstract class BaseFragment extends Fragment {
     protected View mRoot;
     protected Bundle mBundle;
     protected final String F_NAME = this.getClass().getSimpleName();
-    protected final String MHB = "mhb-test";
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(MHB, F_NAME + "-->onCreate");
+        Log.d("mhb", F_NAME + "-->onCreate");
         mBundle = getArguments();
         initBundle(mBundle);
     }

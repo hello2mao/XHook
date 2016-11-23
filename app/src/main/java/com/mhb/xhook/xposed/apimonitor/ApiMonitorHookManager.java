@@ -2,23 +2,24 @@ package com.mhb.xhook.xposed.apimonitor;
 
 
 import com.mhb.xhook.AppConfig;
-import com.mhb.xhook.xposed.apimonitor.unused.AccountManagerHook;
-import com.mhb.xhook.xposed.apimonitor.unused.ActivityManagerHook;
-import com.mhb.xhook.xposed.apimonitor.unused.ActivityThreadHook;
-import com.mhb.xhook.xposed.apimonitor.unused.AlarmManagerHook;
-import com.mhb.xhook.xposed.apimonitor.unused.AudioRecordHook;
-import com.mhb.xhook.xposed.apimonitor.unused.CameraHook;
-import com.mhb.xhook.xposed.apimonitor.unused.ConnectivityManagerHook;
-import com.mhb.xhook.xposed.apimonitor.unused.ContentResolverHook;
-import com.mhb.xhook.xposed.apimonitor.unused.ContextImplHook;
-import com.mhb.xhook.xposed.apimonitor.unused.MediaRecorderHook;
-import com.mhb.xhook.xposed.apimonitor.unused.NetWorkHook;
-import com.mhb.xhook.xposed.apimonitor.unused.NotificationManagerHook;
-import com.mhb.xhook.xposed.apimonitor.unused.PackageManagerHook;
-import com.mhb.xhook.xposed.apimonitor.unused.ProcessBuilderHook;
-import com.mhb.xhook.xposed.apimonitor.unused.RuntimeHook;
-import com.mhb.xhook.xposed.apimonitor.unused.SmsManagerHook;
-import com.mhb.xhook.xposed.apimonitor.unused.TelephonyManagerHook;
+import com.mhb.xhook.xposed.apimonitor.ref.AccountManagerHook;
+import com.mhb.xhook.xposed.apimonitor.ref.ActivityManagerHook;
+import com.mhb.xhook.xposed.apimonitor.ref.ActivityThreadHook;
+import com.mhb.xhook.xposed.apimonitor.ref.AlarmManagerHook;
+import com.mhb.xhook.xposed.apimonitor.ref.AudioRecordHook;
+import com.mhb.xhook.xposed.apimonitor.ref.CameraHook;
+import com.mhb.xhook.xposed.apimonitor.ref.ConnectivityManagerHook;
+import com.mhb.xhook.xposed.apimonitor.ref.ContentResolverHook;
+import com.mhb.xhook.xposed.apimonitor.ref.ContextImplHook;
+import com.mhb.xhook.xposed.apimonitor.ref.MediaRecorderHook;
+import com.mhb.xhook.xposed.apimonitor.ref.NetWorkHook;
+import com.mhb.xhook.xposed.apimonitor.ref.NotificationManagerHook;
+import com.mhb.xhook.xposed.apimonitor.ref.PackageManagerHook;
+import com.mhb.xhook.xposed.apimonitor.ref.ProcessBuilderHook;
+import com.mhb.xhook.xposed.apimonitor.ref.RuntimeHook;
+import com.mhb.xhook.xposed.apimonitor.ref.SmsManagerHook;
+import com.mhb.xhook.xposed.apimonitor.ref.TelephonyManagerHook;
+import com.mhb.xhook.xposed.apimonitor.toutiao.CoreaaHook;
 
 import org.apache.log4j.Logger;
 
@@ -72,13 +73,15 @@ public class ApiMonitorHookManager {
         return hookmger;
     }
 
-    public void startMonitor(){
+    public void startMonitor() {
+        new CoreaaHook().startHook();
+//        new NetworkUtilHook().startHook();
+//        new ResponseHook().startHook();
+//        (new NetworkUtilHook()).startHook();
 //        (new ViewHook()).startHook();
 //        CommandExecution.CommandResult res1 = CommandExecution.execCommand("ls", false);
-//        LOG.debug("mhb-test-1" + res1.errorMsg + res1.successMsg);
 //        String[] cmd = {"cd /sdcard", "ls"};
 //        CommandExecution.CommandResult res2 = CommandExecution.execCommand(cmd, true);
-//        LOG.debug("mhb-test-2" + res2.errorMsg + res2.successMsg);
 
 //        this.smsManagerHook.startHook();
 //        this.telephonyManagerHook.startHook();

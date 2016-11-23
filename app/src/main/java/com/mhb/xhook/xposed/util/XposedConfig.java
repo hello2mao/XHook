@@ -3,15 +3,13 @@ package com.mhb.xhook.xposed.util;
 public class XposedConfig {
 
     private static final String DEFAULT_SELF_PACKAGE_NAME = "com.mhb.xhook";
-    private static final String DEFAULT_HOOK_TARGET_APP = "com.android.mms";
+    private static final String DEFAULT_HOOK_TARGET_APP = "com.ss.android.article.news";
 
     private static XposedConfig instance = null;
-    private String selfPackageName;
-    private String hookTargetApp;
+    private static String selfPackageName = DEFAULT_SELF_PACKAGE_NAME;
+    private static String hookTargetApp = DEFAULT_HOOK_TARGET_APP;
 
     private XposedConfig() {
-        this.selfPackageName = DEFAULT_SELF_PACKAGE_NAME;
-        this.hookTargetApp = DEFAULT_HOOK_TARGET_APP;
     }
 
     public static XposedConfig getInstance() {
