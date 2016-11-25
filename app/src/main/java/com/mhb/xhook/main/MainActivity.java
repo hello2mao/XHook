@@ -34,8 +34,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                    e.printStackTrace();
 //                }
 //                String ip = NetUtil.GetNetIp("http://www.cmyip.com/");
-//                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cmyip.com/"));
-                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("https://www.baidu.com/s?wd=ip"));
+                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cmyip.com/"));
+//                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("https://www.baidu.com/s?wd=ip"));
 //                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://google.com"));
 //                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.mmmmmyip.com/"));
             }

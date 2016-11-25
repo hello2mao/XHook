@@ -68,6 +68,10 @@
         {
           "src": "/Users/maohongbin01/workspace/asproject/XHook_hello2mao/app/src/main/jni/report_data/report.c",
           "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv5te-none-linux-androideabi\" \"-march\u003darmv5te\" \"-mtune\u003dxscale\" \"-msoft-float\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/asproject/XHook_hello2mao/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
+        },
+        {
+          "src": "/Users/maohongbin01/workspace/asproject/XHook_hello2mao/app/src/main/jni/strmon/mon.c",
+          "flags": "\"-gcc-toolchain\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv5te-none-linux-androideabi\" \"-march\u003darmv5te\" \"-mtune\u003dxscale\" \"-msoft-float\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-I/Users/maohongbin01/workspace/asproject/XHook_hello2mao/app/src/main/jni\" \"-DANDROID\" \"-g\" \"-std\u003dgnu99\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/Users/maohongbin01/Library/Android/sdk/ndk-bundle/platforms/android-18/arch-arm/usr/include\""
         }
       ],
       "output": "/Users/maohongbin01/workspace/asproject/XHook_hello2mao/app/build/intermediates/ndkBuild/release/obj/local/armeabi/libxhooknative.so"

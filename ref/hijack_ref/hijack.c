@@ -19,7 +19,7 @@
 #include <errno.h>
 #include <sys/mman.h>
 
-#TODO: just for debug
+// TODO: just for debug
 int debug = 0;
 
 int zygote = 0;
