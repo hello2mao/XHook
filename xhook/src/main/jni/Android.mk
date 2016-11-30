@@ -1,6 +1,16 @@
 LOCAL_PATH := $(call my-dir)
-include $(CLEAR_VARS)
 
+#include $(CLEAR_VARS)
+#LOCAL_MODULE := libdexposed
+#LOCAL_SRC_FILES := third_libs/dexposed_so/dexposed_dalvik/armeabi/libdexposed.a
+#include $(PREBUILT_STATIC_LIBRARY)
+
+#include $(CLEAR_VARS)
+#LOCAL_MODULE := libdexposed
+#LOCAL_SRC_FILES := third_libs/dexposed_so/dexposed_dalvik/armeabi/libdexposed.so
+#include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
 # TODO:
 HOOKS += hooks/hook_dns.c
 HOOKS += hooks/hook_socket.c
@@ -24,6 +34,8 @@ LOCAL_SRC_FILES += $(DALVIK_HOOK) $(HOOKS_JAVA)
 LOCAL_SHARED_LIBRARIES += dvm
 
 # TODO: dexposed
+#LOCAL_STATIC_LIBRARIES += dexposed
+#LOCAL_SHARED_LIBRARIES += dexposed
 
 
 include $(BUILD_SHARED_LIBRARY)
