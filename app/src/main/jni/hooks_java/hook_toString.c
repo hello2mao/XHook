@@ -68,12 +68,4 @@ void init() {
     // 完成对要hook函数Method结构体的修改，从而完成hook
     dalvik_hook(&d, &sb20);
 
-//    dalvik_hook_setup(&requestline_get, "Lokhttp3/internal/http/RequestLine;", "get",
-//                      "(Lokhttp3/Request;Ljava/net/Proxy/Type;)Ljava/lang/String;", 3, okhttp_requestline_get);
-//    dalvik_hook(&d, &requestline_get);
-
-//    dalvik_hook_setup(&test, "Lcom/mhb/xhook/util/NetUtil;", "GetNetIpWithOkHttp3",
-//                      "(Ljava/lang/String;)Ljava/lang/String;", 2, my_hook);
-//    dalvik_hook(&d, &test);
-
 }

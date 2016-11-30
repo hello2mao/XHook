@@ -1,14 +1,3 @@
-/*
- *  Collin's Dynamic Dalvik Instrumentation Toolkit for Android
- *  Collin Mulliner <collin[at]mulliner.org>
- *
- *  (c) 2012,2013
- *
- *  License: LGPL v2.1
- *
- */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -184,8 +173,6 @@ void dalvik_postcall(struct dexstuff_t *dex, struct dalvik_hook_t *h)
         LOGD("patched BACK %s to: 0x%x\n", h->method_name, h->native_func);
     }
 }
-
-//static void __attribute__ ((constructor)) dalvikhook_my_init(void);
 
 static char logfile[] = "/data/local/tmp/log";
 
