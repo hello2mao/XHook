@@ -1,1 +1,0 @@
-Git repositories on android: https://android.googlesource.com/
