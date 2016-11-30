@@ -19,7 +19,6 @@ import com.mhb.xhook.xposed.apimonitor.ref.ProcessBuilderHook;
 import com.mhb.xhook.xposed.apimonitor.ref.RuntimeHook;
 import com.mhb.xhook.xposed.apimonitor.ref.SmsManagerHook;
 import com.mhb.xhook.xposed.apimonitor.ref.TelephonyManagerHook;
-import com.mhb.xhook.xposed.apimonitor.toutiao.CoreaaHook;
 
 import org.apache.log4j.Logger;
 
@@ -74,7 +73,7 @@ public class ApiMonitorHookManager {
     }
 
     public void startMonitor() {
-        new CoreaaHook().startHook();
+//        new CoreaaHook().startHook();
 //        new NetworkUtilHook().startHook();
 //        new ResponseHook().startHook();
 //        (new NetworkUtilHook()).startHook();

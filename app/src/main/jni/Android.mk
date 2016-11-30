@@ -18,10 +18,13 @@ LOCAL_CFLAGS := -g -std=gnu99
 LOCAL_SHARED_LIBRARIES := dl
 
 # TODO: dalvik hook
-DALVIK_HOOK := dalvikhook/dexstuff.c.arm dalvikhook/dalvik_hook.c strmon/mon.c
-LOCAL_SRC_FILES += $(DALVIK_HOOK)
-# LOCAL_LDLIBS += -L./libs -ldl -ldvm
+DALVIK_HOOK := dalvikhook/dexstuff.c.arm dalvikhook/dalvik_hook.c
+HOOKS_JAVA := hooks_java/hook_toString.c
+LOCAL_SRC_FILES += $(DALVIK_HOOK) $(HOOKS_JAVA)
 LOCAL_SHARED_LIBRARIES += dvm
+
+# TODO: dexposed
+
 
 include $(BUILD_SHARED_LIBRARY)
 

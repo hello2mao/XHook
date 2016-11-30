@@ -3,7 +3,7 @@ package com.mhb.xhook.xposed.util;
 public class XposedConfig {
 
     private static final String DEFAULT_SELF_PACKAGE_NAME = "com.mhb.xhook";
-    private static final String DEFAULT_HOOK_TARGET_APP = "com.ss.android.article.news";
+    private static final String DEFAULT_HOOK_TARGET_APP = "com.baidu.test";
 
     private static XposedConfig instance = null;
     private static String selfPackageName = DEFAULT_SELF_PACKAGE_NAME;

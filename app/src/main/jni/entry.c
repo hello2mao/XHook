@@ -21,6 +21,8 @@ int get_android_version(const char *s);
 bool init_hook_func_list(const char *ver);
 void print_hook_func_list();
 extern void my_init(void);
+extern void hook_toString_init();
+extern void init();
 
 // 初始化的时候会调进来一次，在这个方法里持有jvm的引用
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
@@ -107,8 +109,7 @@ JNIEXPORT void JNICALL Java_com_mhb_xhook_networklib_NetworkLibInit_initNativeHo
     // Global reference不会被系统自动释放，它仅当被程序明确调用DeleteGlobalReference时才被回收。JNI多线程机制）
     mobj=(*env)->NewGlobalRef(env, object);
     LOGI("APM NetworkLib init success");
-
-//    my_init();
+    init();
 }
 
 int get_android_version(const char *s) {

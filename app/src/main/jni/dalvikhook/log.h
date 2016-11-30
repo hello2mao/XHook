@@ -10,7 +10,7 @@
 
 void (*libdalvikhook_log_function)(char *logmsg);
 
-void* dalvikhook_set_logfunction(void *func);
+void *dalvikhook_set_logfunction(void *func);
 
 #define log(...) \
         {char __msg[1024] = {0};\

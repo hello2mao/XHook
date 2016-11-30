@@ -15,15 +15,15 @@
 #include "dexstuff.h"
 #include "dalvik_hook.h"
 
-#include "log.h"
+#include "../config.h"
 
-int dalvik_hook_setup(struct dalvik_hook_t *h, char *cls, char *meth, char *sig, int ns, void *func)
-{
-    if (!h)
+int dalvik_hook_setup(struct dalvik_hook_t *h, char *cls, char *meth, char *sig, int ns, void *func) {
+    if (!h) {
         return 0;
+    }
 
     strcpy(h->clname, cls);
-    strncpy(h->clnamep, cls+1, strlen(cls)-2);
+    strncpy(h->clnamep, cls + 1, strlen(cls) - 2);
     strcpy(h->method_name, meth);
     strcpy(h->method_sig, sig);
     h->n_iss = ns;
@@ -32,37 +32,38 @@ int dalvik_hook_setup(struct dalvik_hook_t *h, char *cls, char *meth, char *sig,
     h->native_func = func;
 
     h->sm = 0; // set by hand if needed
-
     h->af = 0x0100; // native, modify by hand if needed
-
     h->resolvm = 0; // don't resolve method on-the-fly, change by hand if needed
-
-    h->debug_me = 0;
+    h->debug_me = DEBUG;
 
     return 1;
 }
 
-void* dalvik_hook(struct dexstuff_t *dex, struct dalvik_hook_t *h)
-{
-    if (h->debug_me)
-        log("dalvik_hook: class %s\n", h->clname)
-
-    void *target_cls = dex->dvmFindLoadedClass_fnPtr(h->clname);
-    if (h->debug_me)
-        log("class = 0x%x\n", target_cls)
-
-    // print class in logcat
-    if (h->dump && dex && target_cls)
-        dex->dvmDumpClass_fnPtr(target_cls, (void*)1);
-
-    if (!target_cls) {
-        if (h->debug_me)
-            log("target_cls == 0\n")
-        return (void*)0;
+void *dalvik_hook(struct dexstuff_t *dex, struct dalvik_hook_t *h) {
+    if (h->debug_me) {
+        LOGD("dalvik_hook: try to hook class %s\n", h->clname);
     }
 
+    void *target_cls = dex->dvmFindLoadedClass_fnPtr(h->clname);
+    if (!target_cls) {
+        LOGE("dvmFindLoadedClass error");
+        return (void*)0;
+    }
+    if (h->debug_me) {
+        LOGD("class = 0x%x\n", target_cls);
+    }
+
+    // print class in logcat
+    if (h->dump && dex && target_cls) {
+        dex->dvmDumpClass_fnPtr(target_cls, (void *) 1);
+    }
+
+
+
+    // 试图在你指定的类中找到你指定名字的那个虚函数。这里所谓的虚函数，指的其实是非静态函数，也就是函数名字前没有static关键字
     h->method = dex->dvmFindVirtualMethodHierByDescriptor_fnPtr(target_cls, h->method_name, h->method_sig);
     if (h->method == 0) {
+        // 试图在你指定类中找到你指定名字的那个静态函数
         h->method = dex->dvmFindDirectMethodByDescriptor_fnPtr(target_cls, h->method_name, h->method_sig);
     }
 
@@ -72,75 +73,85 @@ void* dalvik_hook(struct dexstuff_t *dex, struct dalvik_hook_t *h)
         h->mid = (void*)h->method;
     }
 
-    if (h->debug_me)
-        log("%s(%s) = 0x%x\n", h->method_name, h->method_sig, h->method)
+    if (h->debug_me) {
+        LOGD("%s(%s) = 0x%x\n", h->method_name, h->method_sig, h->method);
+    }
 
     if (h->method) {
         h->insns = h->method->insns;
 
         if (h->debug_me) {
-            log("nativeFunc %x\n", h->method->nativeFunc)
+            LOGD("nativeFunc %x\n", h->method->nativeFunc);
 
-            log("insSize = 0x%x  registersSize = 0x%x  outsSize = 0x%x\n", h->method->insSize, h->method->registersSize, h->method->outsSize)
+            LOGD("insSize = 0x%x  registersSize = 0x%x  outsSize = 0x%x\n", h->method->insSize,
+                 h->method->registersSize, h->method->outsSize);
         }
 
+        // 先将那个代表你要hook函数的Method结构体中的一些变量的当前值保存下来，这些值在后面恢复的时候是要用到的
         h->iss = h->method->insSize;
         h->rss = h->method->registersSize;
         h->oss = h->method->outsSize;
 
+        // 修改成一个Native函数，并且指向的是你自己写的Native代码
         h->method->insSize = h->n_iss;
         h->method->registersSize = h->n_rss;
         h->method->outsSize = h->n_oss;
 
         if (h->debug_me) {
-            log("shorty %s\n", h->method->shorty)
-            log("name %s\n", h->method->name)
-            log("arginfo %x\n", h->method->jniArgInfo)
+            LOGD("shorty %s\n", h->method->shorty);
+            LOGD("name %s\n", h->method->name);
+            LOGD("arginfo %x\n", h->method->jniArgInfo);
         }
         h->method->jniArgInfo = 0x80000000; // <--- also important
         if (h->debug_me) {
-            log("noref %c\n", h->method->noRef)
-            log("access %x\n", h->method->a)
+            LOGD("noref %c\n", h->method->noRef);
+            LOGD("access %x\n", h->method->a);
         }
         h->access_flags = h->method->a;
         h->method->a = h->method->a | h->af; // make method native
-        if (h->debug_me)
-            log("access %x\n", h->method->a)
+        if (h->debug_me) {
+            LOGD("access %x\n", h->method->a);
+        }
 
         dex->dvmUseJNIBridge_fnPtr(h->method, h->native_func);
 
-        if (h->debug_me)
-            log("patched %s to: 0x%x\n", h->method_name, h->native_func)
+        if (h->debug_me) {
+            LOGD("patched %s to: 0x%x\n", h->method_name, h->native_func);
+        }
 
-        return (void*)1;
+        return (void *)1;
+    } else {
+        if (h->debug_me) {
+            LOGD("could NOT patch %s\n", h->method_name);
+        }
     }
-    else {
-        if (h->debug_me)
-            log("could NOT patch %s\n", h->method_name)
-    }
-
-    return (void*)0;
+    return (void *)0;
 }
 
-int dalvik_prepare(struct dexstuff_t *dex, struct dalvik_hook_t *h, JNIEnv *env)
-{
+// 在自己写的JNI函数中，完成了一些附加的功能之后,继续调用原来的那个函数
+int dalvik_prepare(struct dexstuff_t *dex, struct dalvik_hook_t *h, JNIEnv *env) {
 
     // this seems to crash when hooking "constructors"
 
     if (h->resolvm) {
         h->cls = (*env)->FindClass(env, h->clnamep);
-        if (h->debug_me)
-            log("cls = 0x%x\n", h->cls)
-        if (!h->cls)
+        if (h->debug_me) {
+            LOGD("cls = 0x%x\n", h->cls);
+        }
+        if (!h->cls) {
             return 0;
-        if (h->sm)
+        }
+        if (h->sm) {
             h->mid = (*env)->GetStaticMethodID(env, h->cls, h->method_name, h->method_sig);
-        else
+        } else {
             h->mid = (*env)->GetMethodID(env, h->cls, h->method_name, h->method_sig);
-        if (h->debug_me)
-            log("mid = 0x%x\n", h-> mid)
-        if (!h->mid)
+        }
+        if (h->debug_me) {
+            LOGD("mid = 0x%x\n", h->mid);
+        }
+        if (!h->mid) {
             return 0;
+        }
     }
 
     h->method->insSize = h->iss;
@@ -157,20 +168,21 @@ void dalvik_postcall(struct dexstuff_t *dex, struct dalvik_hook_t *h)
     h->method->registersSize = h->n_rss;
     h->method->outsSize = h->n_oss;
 
-    //log("shorty %s\n", h->method->shorty)
-    //log("name %s\n", h->method->name)
-    //log("arginfo %x\n", h->method->jniArgInfo)
+    //LOGD("shorty %s\n", h->method->shorty)
+    //LOGD("name %s\n", h->method->name)
+    //LOGD("arginfo %x\n", h->method->jniArgInfo)
     h->method->jniArgInfo = 0x80000000;
-    //log("noref %c\n", h->method->noRef)
-    //log("access %x\n", h->method->a)
+    //LOGD("noref %c\n", h->method->noRef)
+    //LOGD("access %x\n", h->method->a)
     h->access_flags = h->method->a;
     h->method->a = h->method->a | h->af;
-    //log("access %x\n", h->method->a)
+    //LOGD("access %x\n", h->method->a)
 
     dex->dvmUseJNIBridge_fnPtr(h->method, h->native_func);
 
-    if (h->debug_me)
-        log("patched BACK %s to: 0x%x\n", h->method_name, h->native_func)
+    if (h->debug_me) {
+        LOGD("patched BACK %s to: 0x%x\n", h->method_name, h->native_func);
+    }
 }
 
 //static void __attribute__ ((constructor)) dalvikhook_my_init(void);
@@ -187,19 +199,4 @@ static void logmsgtofile(char *msg)
 static void logmsgtostdout(char *msg)
 {
     write(1, msg, strlen(msg));
-}
-
-void* dalvikhook_set_logfunction(void *func)
-{
-    void *old = libdalvikhook_log_function;
-    libdalvikhook_log_function = func;
-    //logmsgtofile("dalvik_set_logfunction called\n");
-    return old;
-}
-
-static void dalvikhook_my_init(void)
-{
-    // set the log_function
-    //logmsgtofile("dalvik init\n");
-    libdalvikhook_log_function = logmsgtofile;
 }
