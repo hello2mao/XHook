@@ -1,6 +1,7 @@
 #other
 abandoned
 android-4.4.4_r1
+xhook/.externalNativeBuild
 
 #built application files
 *.apk
