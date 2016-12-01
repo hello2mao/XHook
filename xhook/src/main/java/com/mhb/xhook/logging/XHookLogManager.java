@@ -2,7 +2,7 @@ package com.mhb.xhook.logging;
 
 public class XHookLogManager {
 
-    private static DefaultBasicLog instance = null;
+    private volatile static DefaultBasicLog instance = null;
 
     private XHookLogManager() {}
 

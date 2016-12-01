@@ -8,7 +8,7 @@
 #include "config.h"
 #include "hooks/util.h"
 #include "base/util.h"
-#include "hooks_java/hooks_java_init.h"
+#include "ddi/hooks_java/hooks_java_init.h"
 
 LIB_HOOK_INFO_NODE* custom_lib_hook_info_root = NULL;
 HOOKED_INFO_NODE* hooked_info_root = NULL;
@@ -112,6 +112,9 @@ JNIEXPORT void JNICALL Java_com_mhb_xhook_networklib_NetworkLibInit_initNativeHo
     LOGI("APM NetworkLib init success");
     hooks_java_init();
     hook_toString_setup();
+    hook_getmethod_setup();
+    hook_requestLine_get_setup();
+    hook_requestLine_requestPath_setup();
 }
 
 int get_android_version(const char *s) {

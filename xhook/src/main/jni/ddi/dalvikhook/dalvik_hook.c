@@ -4,7 +4,7 @@
 #include "dexstuff.h"
 #include "dalvik_hook.h"
 
-#include "../config.h"
+#include "../../config.h"
 
 int dalvik_hook_setup(struct dalvik_hook_t *h, char *cls, char *meth, char *sig, int ns, void *func) {
     if (!h) {
@@ -36,7 +36,7 @@ void *dalvik_hook(struct dexstuff_t *dex, struct dalvik_hook_t *h) {
     void *target_cls = dex->dvmFindLoadedClass_fnPtr(h->clname);
     if (!target_cls) {
         LOGE("dvmFindLoadedClass error");
-        return (void*)0;
+//        return (void*)0;
     }
     if (h->debug_me) {
         LOGD("class = 0x%x\n", target_cls);
@@ -52,8 +52,14 @@ void *dalvik_hook(struct dexstuff_t *dex, struct dalvik_hook_t *h) {
     // 试图在你指定的类中找到你指定名字的那个虚函数。这里所谓的虚函数，指的其实是非静态函数，也就是函数名字前没有static关键字
     h->method = dex->dvmFindVirtualMethodHierByDescriptor_fnPtr(target_cls, h->method_name, h->method_sig);
     if (h->method == 0) {
+        LOGD("try find static func");
         // 试图在你指定类中找到你指定名字的那个静态函数
         h->method = dex->dvmFindDirectMethodByDescriptor_fnPtr(target_cls, h->method_name, h->method_sig);
+    } else {
+        LOGD("find non static func");
+    }
+    if (h->method == 0) {
+        LOGD("find func failed");
     }
 
     // constrcutor workaround, see "dalvik_prepare" below
@@ -71,7 +77,6 @@ void *dalvik_hook(struct dexstuff_t *dex, struct dalvik_hook_t *h) {
 
         if (h->debug_me) {
             LOGD("nativeFunc %x\n", h->method->nativeFunc);
-
             LOGD("insSize = 0x%x  registersSize = 0x%x  outsSize = 0x%x\n", h->method->insSize,
                  h->method->registersSize, h->method->outsSize);
         }

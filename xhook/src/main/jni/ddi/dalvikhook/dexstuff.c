@@ -5,7 +5,7 @@
 
 #include "dexstuff.h"
 
-#include "../config.h"
+#include "../../config.h"
 
 // 获得进程中libdvm.so动态库的一些有用的函数或者全局变量的地址，
 // 并将其保存在一个dexstuff_t（位于dexstuff.h源文件中）结构体中
@@ -46,6 +46,10 @@ void dexstuff_resolv_dvm(struct dexstuff_t *d) {
             d->dvmFindDirectMethodByDescriptor_fnPtr = mydlsym(d->dvm_hand,
                                                                "dvmFindDirectMethodByDescriptor");
         }
+        if (!d->dvmFindDirectMethodByDescriptor_fnPtr) {
+            LOGI("dvmFindDirectMethodByDescriptor can not found");
+        }
+
         d->dvmIsStaticMethod_fnPtr = mydlsym(d->dvm_hand, "_Z17dvmIsStaticMethodPK6Method");
         d->dvmAllocObject_fnPtr = mydlsym(d->dvm_hand, "dvmAllocObject");
         d->dvmCallMethodV_fnPtr = mydlsym(d->dvm_hand, "_Z14dvmCallMethodVP6ThreadPK6MethodP6ObjectbP6JValueSt9__va_list");

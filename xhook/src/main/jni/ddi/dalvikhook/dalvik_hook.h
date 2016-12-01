@@ -1,8 +1,7 @@
 #include <jni.h>
 #include "dexstuff.h"
 
-struct dalvik_hook_t
-{
+struct dalvik_hook_t {
     char clname[256];
     char clnamep[256];
     char method_name[256];
@@ -37,7 +36,7 @@ struct dalvik_hook_t
     int debug_me;  // print debug while operating on this method
 };
 
-void* dalvik_hook(struct dexstuff_t *dex, struct dalvik_hook_t *h);
+void *dalvik_hook(struct dexstuff_t *dex, struct dalvik_hook_t *h);
 int dalvik_prepare(struct dexstuff_t *dex, struct dalvik_hook_t *h, JNIEnv *env);
 void dalvik_postcall(struct dexstuff_t *dex, struct dalvik_hook_t *h);
 int dalvik_hook_setup(struct dalvik_hook_t *h, char *cls, char *meth, char *sig, int ns, void *func);
