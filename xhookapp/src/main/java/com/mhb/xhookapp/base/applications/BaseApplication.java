@@ -1,6 +1,7 @@
 package com.mhb.xhookapp.base.applications;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.mhb.xhook.dexposed.Dexposed;
 import com.mhb.xhookapp.AppConfig;
@@ -16,7 +17,9 @@ public class BaseApplication extends Application {
         super.onCreate();
 
         if (AppConfig.ENABLE_DEXPOSED) {
-            Dexposed.init(this);
+            if (Dexposed.init(this)) {
+                Log.d(AppConfig.CONF_TAG, "dexposed init sucess!");
+            }
         }
     }
 }

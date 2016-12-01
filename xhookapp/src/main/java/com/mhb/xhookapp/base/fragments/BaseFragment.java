@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import java.io.Serializable;
 
-import butterknife.ButterKnife;
 
 
 /**
@@ -47,7 +46,7 @@ public abstract class BaseFragment extends Fragment {
             // Do something
             onBindViewBefore(mRoot);
             // Bind view
-            ButterKnife.bind(this, mRoot);
+//            ButterKnife.bind(this, mRoot);
             // Get savedInstanceState
             if (savedInstanceState != null)
                 onRestartInstance(savedInstanceState);
