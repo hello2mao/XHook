@@ -3,7 +3,7 @@
 #include <jni.h>
 
 #include "report.h"
-#include "../config.h"
+#include "config.h"
 
 JNIEnv* getJNIEnv(int *needsDetach) {
     JNIEnv *env = NULL;

@@ -4,13 +4,12 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <yposed/Dvm/dvm.h>
-#include <yposed/Art/art.h>
+#include <hook_java/dvm/dvm.h>
+#include <hook_java/art/art.h>
 
 #include "config.h"
-#include "hooks/util.h"
-#include "base/util.h"
-#include "ddi/hooks_java/hooks_java_init.h"
+#include "hook_native/hooks/util.h"
+#include "hook_native/base/util.h"
 
 LIB_HOOK_INFO_NODE* custom_lib_hook_info_root = NULL;
 HOOKED_INFO_NODE* hooked_info_root = NULL;
@@ -119,7 +118,6 @@ JNIEXPORT void JNICALL Java_com_mhb_xhook_nativehook_HookManager_initNativeHook(
     // Global reference不会被系统自动释放，它仅当被程序明确调用DeleteGlobalReference时才被回收。JNI多线程机制）
     mobj=(*env)->NewGlobalRef(env, object);
     LOGI("Lib init success");
-//    hooks_java_init();
 
 }
 

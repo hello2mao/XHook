@@ -1,4 +1,4 @@
-#include "../config.h"
+#include "config.h"
 
 struct hook_t {
     unsigned int jump[3];     /* 要修改的hook指令（Arm） */

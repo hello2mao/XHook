@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <sys/epoll.h>
 #include <jni.h>
+#include <stdlib.h>
 
 #include "util.h"
 #include "hook.h"

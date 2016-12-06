@@ -11,7 +11,7 @@
 #include <dlfcn.h>
 #include <elf.h>
 #include <unistd.h>
-#include <errno.h>       
+#include <errno.h>
 #include <sys/mman.h>
 #include <termios.h>
 #include <sys/ioctl.h>

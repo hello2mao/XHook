@@ -4,7 +4,7 @@
 #include "dexstuff.h"
 #include "dalvik_hook.h"
 
-#include "../../config.h"
+#include "config.h"
 
 int dalvik_hook_setup(struct dalvik_hook_t *h, char *cls, char *meth, char *sig, int ns, void *func) {
     if (!h) {

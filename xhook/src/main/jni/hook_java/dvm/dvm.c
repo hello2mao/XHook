@@ -35,16 +35,15 @@ static void dvm_doHook(void *origin, void *proxy) {
     *pro_size = size_temp;
 }
 
-static void hook_yposed_method(JNIEnv* env, jobject thiz, jobject method_origin, jobject method_proxy) {
+static void hook_method(JNIEnv* env, jobject thiz, jobject method_origin, jobject method_proxy) {
     jmethodID meth_ori = (*env)->FromReflectedMethod(env, method_origin);
     jmethodID meth_pro = (*env)->FromReflectedMethod(env, method_proxy);
     dvm_doHook(meth_ori, meth_pro);
 }
 
 static JNINativeMethod gMethods[] = {
-        { "hookYposedMethod", "(Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;)V",
-                (void *) hook_yposed_method },
-        };
+    { "hookMethod", "(Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;)V", (void *) hook_method }
+};
 
 
 static int registerNativeMethods(JNIEnv* env, const char *className,

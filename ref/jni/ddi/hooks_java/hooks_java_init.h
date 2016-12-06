@@ -2,7 +2,7 @@
 #define XHOOK_HELLO2MAO_HOOKS_JAVA_INIT_H
 
 #include "../dalvikhook/dexstuff.h"
-#include "../../config.h"
+#include "config.h"
 
 struct dexstuff_t dex_stuff;
 

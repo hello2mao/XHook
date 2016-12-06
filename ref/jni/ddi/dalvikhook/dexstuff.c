@@ -5,7 +5,7 @@
 
 #include "dexstuff.h"
 
-#include "../../config.h"
+#include "config.h"
 
 // 获得进程中libdvm.so动态库的一些有用的函数或者全局变量的地址，
 // 并将其保存在一个dexstuff_t（位于dexstuff.h源文件中）结构体中

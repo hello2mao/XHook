@@ -2,12 +2,11 @@
 #define XHOOK_CONFIG_H
 
 #include <android/log.h>
-
 #include "com_mhb_xhook_nativehook_HookManager.h"
 
-#define LOG_TAG "XHook-native"
+#define DEBUG
 
-#define DEBUG 1
+#define LOG_TAG "XHook-Native"
 #ifdef DEBUG
 #define LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
@@ -18,6 +17,14 @@
 #define LOGE(...) while(0){}
 #endif
 
+/*************************************************************
+ * hook_java
+ ************************************************************/
+#define JNIHOOK_CLASS "com/mhb/xhook/nativehook/HookManager"
+
+/*************************************************************
+ * hook_native
+ ************************************************************/
 #define MAX_HOOK_INFO_LEN 80
 #define MAX_HOOK_FUNC_LEN 20
 
@@ -52,16 +59,6 @@
 #define UNKNOWN_PORT -1
 
 
-#ifndef FRAMEWORK_SYSTEM_API
-#define FRAMEWORK_SYSTEM_API 0x00
-#endif
 
-#ifndef NATIVE_SYSTEM_API
-#define NATIVE_SYSTEM_API 0x10
-#endif
-
-#ifndef NATIVE_APP_API
-#define NATIVE_APP_API 0x11
-#endif
 
 #endif //XHOOK_CONFIG_H

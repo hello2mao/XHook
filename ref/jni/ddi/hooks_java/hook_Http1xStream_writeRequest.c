@@ -1,5 +1,5 @@
 #include <jni.h>
-#include "../../base/hook.h"
+#include "base/hook.h"
 #include "../dalvikhook/dexstuff.h"
 #include "../dalvikhook/dalvik_hook.h"
 #include "hooks_java_init.h"

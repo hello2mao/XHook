@@ -9,9 +9,9 @@
 #include <sys/types.h>
 
 
-#include "../base/hook.h"
-#include "../config.h"
-#include "../report_data/report.h"
+#include "hook_native/base/hook.h"
+#include "config.h"
+#include "hook_native/report_data/report.h"
 
 typedef struct hook_info {
     struct hook_t eph;

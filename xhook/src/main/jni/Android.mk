@@ -1,50 +1,36 @@
 LOCAL_PATH := $(call my-dir)
 
-#include $(CLEAR_VARS)
-#LOCAL_MODULE := libdexposed
-#LOCAL_SRC_FILES := third_libs/dexposed_so/dexposed_dalvik/armeabi/libdexposed.a
-#include $(PREBUILT_STATIC_LIBRARY)
-
-#include $(CLEAR_VARS)
-#LOCAL_MODULE := libdexposed
-#LOCAL_SRC_FILES := third_libs/dexposed_so/dexposed_dalvik/armeabi/libdexposed.so
-#include $(PREBUILT_SHARED_LIBRARY)
-
 include $(CLEAR_VARS)
-# TODO:
-HOOKS += hooks/hook_dns.c
-HOOKS += hooks/hook_socket.c
-HOOKS += hooks/hook_connect.c
-HOOKS += hooks/hook_poll.c
-HOOKS += hooks/hook_sendto.c
-HOOKS += hooks/hook_recvfrom.c
-HOOKS += hooks/hook_ssl_do_handshake.c
 
+# TODO: hook_native
+HOOKS += hook_native/hooks/hook_dns.c
+HOOKS += hook_native/hooks/hook_socket.c
+HOOKS += hook_native/hooks/hook_connect.c
+HOOKS += hook_native/hooks/hook_poll.c
+HOOKS += hook_native/hooks/hook_sendto.c
+HOOKS += hook_native/hooks/hook_recvfrom.c
+HOOKS += hook_native/hooks/hook_ssl_do_handshake.c
+LOCAL_SRC_FILES += \
+    hook_native/base/hook.c\
+    hook_native/base/util.c\
+    hook_native/hooks/util.c\
+    hook_native/report_data/report.c\
+    $(HOOKS)\
+
+# TODO: hook_java
+LOCAL_SRC_FILES += \
+    hook_java/art/art.c\
+    hook_java/art/art_helper.c\
+    hook_java/dvm/dvm.c\
+    hook_java/dvm/dvm_helper.c\
+
+# TODO: module setting
+LOCAL_SRC_FILES += main.c
 #LOCAL_ARM_MODE := arm
 LOCAL_MODULE := xhooknative
-LOCAL_SRC_FILES := entry.c base/hook.c base/util.c hooks/util.c report_data/report.c $(HOOKS)
 LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog -lcrypto -lssl
 LOCAL_CFLAGS := -g
 LOCAL_SHARED_LIBRARIES := dl
-
-# TODO: dalvik hook
-DALVIK_HOOK := ddi/dalvikhook/dexstuff.c.arm ddi/dalvikhook/dalvik_hook.c ddi/hooks_java/hooks_java_init.c
-HOOKS_JAVA := ddi/hooks_java/hook_toString.c ddi/hooks_java/hook_getMethod.c ddi/hooks_java/hook_Http1xStream_writeRequestHeaders.c
-HOOKS_JAVA += ddi/hooks_java/hook_requestLine_get.c ddi/hooks_java/hook_requestLine_requestPath.c
-HOOKS_JAVA += ddi/hooks_java/hook_Http1xStream_writeRequest.c
-LOCAL_SRC_FILES += $(DALVIK_HOOK) $(HOOKS_JAVA)
-LOCAL_SHARED_LIBRARIES += dvm
-
-# TODO: dexposed
-#LOCAL_STATIC_LIBRARIES += dexposed
-#LOCAL_SHARED_LIBRARIES += dexposed
-
-# TODO: Yposed
-LOCAL_SRC_FILES += \
-    yposed/Art/art.c\
-    yposed/Art/art_helper.c\
-    yposed/Dvm/dvm.c\
-    yposed/Dvm/dvm_helper.c\
 
 include $(BUILD_SHARED_LIBRARY)
 

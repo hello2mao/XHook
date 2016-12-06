@@ -101,7 +101,7 @@ public class HookManager {
                     throw new IllegalArgumentException("hook " + proxy + " duplicated");
                 }
                 sMethodCache.put(proxy, m);
-                hookYposedMethod(origin, m);
+                hookMethod(origin, m);
                 return;
             }
         }
@@ -141,7 +141,7 @@ public class HookManager {
      * @param origin
      * @param proxy
      */
-    private static native void hookYposedMethod(Method origin, Method proxy);
+    private static native void hookMethod(Method origin, Method proxy);
 
     /**
      *

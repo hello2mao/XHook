@@ -5,7 +5,7 @@
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <config.h>
+#include "config.h"
 
 typedef uint8_t             u1;
 typedef uint16_t            u2;
