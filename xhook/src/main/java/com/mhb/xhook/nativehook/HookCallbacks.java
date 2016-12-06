@@ -58,6 +58,11 @@ public class HookCallbacks {
             LOG.debug("impl=" + impl.toString());
             Class<?> clazz = Class.forName("java.net.PlainSocketImpl");
             Field field2 = ReflectionUtils.getField(clazz, "fd");
+            if (field2 != null) {
+                field2.setAccessible(true);
+            } else {
+                LOG.debug("can not get field: fd");
+            }
             FileDescriptor fd = (FileDescriptor) field2.get(impl);
             LOG.debug("url=" + request.url() + ", fd=" + fd.toString());
 

@@ -151,9 +151,9 @@ public class ReflectionUtils {
                 }
                 return field;
             } catch (Exception e) {
-
+                // ignore e
             }finally{
-                //当传进来的第一个类抛了异常，那么之后获取的都是父类，所有让前面的if条件不能执行
+                //当传进来的第一个类抛了异常，那么之后获取的都是父类，所以让前面的if条件不能执行
                 isFirstClass = false;
             }
         }
