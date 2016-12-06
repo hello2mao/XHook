@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.mhb.xhook.networklib.NetworkLibInit;
+import com.mhb.xhook.Xhook;
 import com.mhb.xhookapp.R;
 import com.mhb.xhookapp.base.activities.BaseActivity;
 import com.mhb.xhookapp.util.NetUtil;
@@ -19,17 +19,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void run() {
                 Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cmyip.com/"));
-                String packageName = getApplicationContext().getPackageName();
-                log.debug("libPath=" + "/data/data/" + packageName + "/lib/libxhooknative.so");
-                new NetworkLibInit().initNativeHook("/data/data/" + packageName + "/lib/libxhooknative.so", android.os.Build.VERSION.RELEASE);
+                Xhook.withToken("mhb").start(getApplicationContext());
 
             }
         }).start();
-
-//        String packageName = getApplicationContext().getPackageName();
-//        log.debug("libPath=" + "/data/data/" + packageName + "/lib/libxhooknative.so");
-//        new NetworkLibInit().initNativeHook("/data/data/" + packageName + "/lib/libxhooknative.so", android.os.Build.VERSION.RELEASE);
-
     }
 
     @Override
@@ -45,6 +38,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                }
 //                String ip = NetUtil.GetNetIp("http://www.cmyip.com/");
                 Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cmyip.com/"));
+                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cnblogs.com/toSeeMyDream/p/5680007.html"));
                 try {
                     Log.d("test", MainActivity.class.getMethod("onClick", View.class).toString());
                 } catch (NoSuchMethodException e) {

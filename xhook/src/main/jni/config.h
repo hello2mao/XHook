@@ -3,14 +3,20 @@
 
 #include <android/log.h>
 
-#include "com_mhb_xhook_networklib_NetworkLibInit.h"
-
-#define DEBUG 1
+#include "com_mhb_xhook_nativehook_HookManager.h"
 
 #define LOG_TAG "XHook-native"
+
+#define DEBUG 1
+#ifdef DEBUG
 #define LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 #define LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+#else
+#define LOGI(...) while(0){}
+#define LOGD(...) while(0){}
+#define LOGE(...) while(0){}
+#endif
 
 #define MAX_HOOK_INFO_LEN 80
 #define MAX_HOOK_FUNC_LEN 20

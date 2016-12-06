@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <yposed/Dvm/dvm.h>
+#include <yposed/Art/art.h>
 
 #include "config.h"
 #include "hooks/util.h"
@@ -21,13 +23,10 @@ char hook_func_list[MAX_HOOK_FUNC_LEN][MAX_HOOK_INFO_LEN] = {}; // increase/decr
 int get_android_version(const char *s);
 bool init_hook_func_list(const char *ver);
 void print_hook_func_list();
-extern void my_init(void);
-extern void hook_toString_init();
-extern void init();
 
 // 初始化的时候会调进来一次，在这个方法里持有jvm的引用
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-    LOGD("NetworkLib JNI_OnLoad");
+    LOGD("Lib JNI_OnLoad");
     m_vm=vm;
     JNIEnv *env = NULL;
     jint result = -1;
@@ -41,26 +40,36 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
 // 当动态库被卸载时这个函数被系统调用
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved) {
-    LOGD("NetworkLib JNI_OnUnload");
+    LOGD("Lib JNI_OnUnload");
+}
+
+void hook_java_init(JNIEnv* env, jint version) {
+    if ((int) version < 0) {
+        LOGD("Java hook, Dalvik mode");
+        dvm_jni_onload(env);
+    } else {
+        LOGD("Java hook, ART mode");
+        art_jni_onload(env, (int)version);
+    }
 }
 
 /**
- * JNI native 接口，初始化NetworkLib
+ * JNI native 接口，初始化Lib
  * path：lib path
  */
-JNIEXPORT void JNICALL Java_com_mhb_xhook_networklib_NetworkLibInit_initNativeHook(
-    JNIEnv *env,
-    jobject object,
-    jstring path,
-    jstring release) {
+JNIEXPORT void JNICALL Java_com_mhb_xhook_nativehook_HookManager_initNativeHook(
+    JNIEnv *env, jobject object, jstring path, jstring release, jint version) {
 
     const char *lib_path = (*env)->GetStringUTFChars(env, path, 0);
     const char *rel = (*env)->GetStringUTFChars(env, release, 0);
-    LOGD("Init Network Lib, path=%s, release=%s\n", lib_path, rel);
+    LOGD("Init Lib, path=%s, Android Release=%s\n", lib_path, rel);
+
+    // init Java Hook
+    hook_java_init(env, version);
 
     bool ret = init_hook_func_list(rel);
     if (!ret) {
-        LOGE("Recently, not support android %s\n", rel);
+        LOGE("Recently, not support Android %s\n", rel);
         return;
     }
 
@@ -109,12 +118,9 @@ JNIEXPORT void JNICALL Java_com_mhb_xhook_networklib_NetworkLibInit_initNativeHo
     // 若要留着日后使用，则需根据这个 local reference创建global reference。
     // Global reference不会被系统自动释放，它仅当被程序明确调用DeleteGlobalReference时才被回收。JNI多线程机制）
     mobj=(*env)->NewGlobalRef(env, object);
-    LOGI("APM NetworkLib init success");
-    hooks_java_init();
-    hook_toString_setup();
-    hook_getmethod_setup();
-    hook_requestLine_get_setup();
-    hook_requestLine_requestPath_setup();
+    LOGI("Lib init success");
+//    hooks_java_init();
+
 }
 
 int get_android_version(const char *s) {

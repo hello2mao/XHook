@@ -24,13 +24,14 @@ HOOKS += hooks/hook_ssl_do_handshake.c
 LOCAL_MODULE := xhooknative
 LOCAL_SRC_FILES := entry.c base/hook.c base/util.c hooks/util.c report_data/report.c $(HOOKS)
 LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog -lcrypto -lssl
-LOCAL_CFLAGS := -g -std=gnu99
+LOCAL_CFLAGS := -g
 LOCAL_SHARED_LIBRARIES := dl
 
 # TODO: dalvik hook
 DALVIK_HOOK := ddi/dalvikhook/dexstuff.c.arm ddi/dalvikhook/dalvik_hook.c ddi/hooks_java/hooks_java_init.c
-HOOKS_JAVA := ddi/hooks_java/hook_toString.c ddi/hooks_java/hook_getMethod.c
+HOOKS_JAVA := ddi/hooks_java/hook_toString.c ddi/hooks_java/hook_getMethod.c ddi/hooks_java/hook_Http1xStream_writeRequestHeaders.c
 HOOKS_JAVA += ddi/hooks_java/hook_requestLine_get.c ddi/hooks_java/hook_requestLine_requestPath.c
+HOOKS_JAVA += ddi/hooks_java/hook_Http1xStream_writeRequest.c
 LOCAL_SRC_FILES += $(DALVIK_HOOK) $(HOOKS_JAVA)
 LOCAL_SHARED_LIBRARIES += dvm
 
@@ -38,6 +39,12 @@ LOCAL_SHARED_LIBRARIES += dvm
 #LOCAL_STATIC_LIBRARIES += dexposed
 #LOCAL_SHARED_LIBRARIES += dexposed
 
+# TODO: Yposed
+LOCAL_SRC_FILES += \
+    yposed/Art/art.c\
+    yposed/Art/art_helper.c\
+    yposed/Dvm/dvm.c\
+    yposed/Dvm/dvm_helper.c\
 
 include $(BUILD_SHARED_LIBRARY)
 
