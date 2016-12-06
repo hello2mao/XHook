@@ -84,7 +84,7 @@ public class ReflectionUtils {
      *
      * @param className
      *            通过传入的类名
-     * @param methodname
+     * @param methodName
      *            方法名
      * @param args
      *            方法入口参数
@@ -107,12 +107,6 @@ public class ReflectionUtils {
 
         return invoke(obj, methodName, args);
     }
-
-
-
-
-
-
 
     /**
      * 获取某对象中指定字段的值（该字段有可能是从父类中继承的）
@@ -167,7 +161,6 @@ public class ReflectionUtils {
         return null;
     }
 
-
     /**
      * 为某个对象设置指定的值
      *
@@ -201,10 +194,6 @@ public class ReflectionUtils {
 
         return obj;
     }
-
-
-
-
 
     /**
      * 获取泛型类的参数类型

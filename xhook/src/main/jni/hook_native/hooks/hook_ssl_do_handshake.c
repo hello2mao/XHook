@@ -1,6 +1,8 @@
 #include <openssl/ssl.h>
 
-#include "util.h"
+#include <hook_native/report_data/report.h>
+#include <hook_native/base/hook.h>
+#include <errno.h>
 
 // Support version：
 // (1)android 4.4
@@ -22,6 +24,7 @@ int xhook_SSL_do_handshake(SSL *ssl) {
     double startTime = t1.tv_sec / 1000.0 + t1.tv_usec / 1000.0 / 1000.0 / 1000.0;
     int timeElapsed = (t2.tv_sec - t1.tv_sec) * 1000 + (t2.tv_usec - t1.tv_usec) / 1000;
     char desc[200] = {};
+    // see org_conscrypt_NativeCrypto.cpp
     if (status != 1) {
         int sslError = SSL_get_error(ssl, status);
         if (sslError == SSL_ERROR_WANT_READ || sslError == SSL_ERROR_WANT_WRITE) {

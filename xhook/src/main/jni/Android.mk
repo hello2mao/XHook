@@ -13,7 +13,6 @@ HOOKS += hook_native/hooks/hook_ssl_do_handshake.c
 LOCAL_SRC_FILES += \
     hook_native/base/hook.c\
     hook_native/base/util.c\
-    hook_native/hooks/util.c\
     hook_native/report_data/report.c\
     $(HOOKS)\
 

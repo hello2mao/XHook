@@ -51,11 +51,6 @@ public class Xhook {
         } catch (NoSuchMethodException e) {
             LOG.error(e.toString());
         }
-        LOG.debug(victim(1, 1234567890987654321l, 'c'));
     }
 
-    private String victim(int a, long b, char c) {
-        LOG.debug("victim: " + this);
-        return "test";
-    }
 }

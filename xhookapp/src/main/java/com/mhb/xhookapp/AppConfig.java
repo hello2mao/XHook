@@ -18,7 +18,6 @@ public class AppConfig {
 
     public final static String CONF_APP_UNIQUEID = "APP_UNIQUEID";
     public final static String CONF_TAG = "XHook-APP";
-    public final static boolean ENABLE_DEXPOSED = true;
 
 
     private Context mContext;

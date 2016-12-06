@@ -1,3 +1,6 @@
+#ifndef XHOOK_HOOK_H
+#define XHOOK_HOOK_H
+
 #include "config.h"
 
 struct hook_t {
@@ -12,6 +15,20 @@ struct hook_t {
     void *data;
 };
 
+typedef struct hook_info {
+    struct hook_t eph;
+    char *libname;
+    char *funcname;
+    void *hook_arm;
+    void *hook_thumb;
+} HOOK_INFO;
+
+typedef struct hooked_info_node {
+    char *libname;
+    char *funcname;
+    struct hooked_info_node *next;
+} HOOKED_INFO_NODE;
+
 int start_coms(int *coms, char *ptsn);
 
 void hook_cacheflush(unsigned int begin, unsigned int end);
@@ -19,3 +36,5 @@ void hook_precall(struct hook_t *h);
 void hook_postcall(struct hook_t *h);
 int hook(struct hook_t *h, int pid, char *libname, char *funcname, void *hook_arm, void *hook_thumb);
 void unhook(struct hook_t *h);
+
+#endif

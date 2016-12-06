@@ -1,3 +1,6 @@
+#ifndef XHOOK_UTIL_H
+#define XHOOK_UTIL_H
+
 #include <termios.h>
 
 typedef struct lib_hook_info_node {
@@ -10,5 +13,5 @@ int find_libbase(pid_t pid, char *libn, unsigned long *addr);
 LIB_HOOK_INFO_NODE* build_hook_info_list_v1(char *filepath, char *condition);
 LIB_HOOK_INFO_NODE* build_hook_info_list_v2(const char *filepath, char **condition_list);
 
-
+#endif
 

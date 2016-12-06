@@ -1,7 +1,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
-
-#include "util.h"
+#include <sys/time.h>
+#include <string.h>
+#include <hook_native/report_data/report.h>
+#include <hook_native/base/hook.h>
 
 // Support version：
 // (1)android 4.4

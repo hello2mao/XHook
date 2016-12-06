@@ -2,6 +2,7 @@
 #define XHOOK_REPORT_H
 
 #include <pthread.h>
+#include <jni.h>
 
 extern jmethodID mid;
 extern jclass objclass;

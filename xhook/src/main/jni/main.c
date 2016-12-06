@@ -4,11 +4,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <hook_java/dvm/dvm.h>
-#include <hook_java/art/art.h>
-
+#include "hook_java/dvm/dvm.h"
+#include "hook_java/art/art.h"
+#include "hook_native/base/hook.h"
 #include "config.h"
-#include "hook_native/hooks/util.h"
 #include "hook_native/base/util.h"
 
 LIB_HOOK_INFO_NODE* custom_lib_hook_info_root = NULL;
