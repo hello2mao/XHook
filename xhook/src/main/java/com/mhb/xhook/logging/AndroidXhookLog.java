@@ -6,41 +6,41 @@ import android.util.Log;
 public class AndroidXhookLog implements BasicLog {
     private int level;
     public AndroidXhookLog() {
-        level = 3;
+        level = INFO;
     }
 
     public void debug(String message) {
-        if (level == 5) {
+        if (level == DEBUG) {
             Log.d(TAG, message);
         }
     }
 
     public void verbose(String message) {
-        if (level >= 4) {
+        if (level >= VERBOSE) {
             Log.v(TAG, message);
         }
     }
 
     public void info(String message) {
-        if (level >= 3) {
+        if (level >= INFO) {
             Log.i(TAG, message);
         }
     }
 
     public void warning(String message) {
-        if (level >= 2) {
+        if (level >= WARNING) {
             Log.w(TAG, message);
         }
     }
 
     public void error(String message) {
-        if (level >= 1) {
+        if (level >= ERROR) {
             Log.e(TAG, message);
         }
     }
 
     public void error(String message, Throwable cause) {
-        if (level >= 1) {
+        if (level >= ERROR) {
             Log.e(TAG, message, cause);
         }
     }
@@ -50,7 +50,7 @@ public class AndroidXhookLog implements BasicLog {
     }
 
     public void setLevel(int level) {
-        if (level <= 5 && level >= 1) {
+        if (level <= DEBUG && level >= ERROR) {
             this.level = level;
         } else {
             throw new IllegalArgumentException("Log level is not between ERROR and DEBUG");
