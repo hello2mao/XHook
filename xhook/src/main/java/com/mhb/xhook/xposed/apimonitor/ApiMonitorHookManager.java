@@ -2,7 +2,7 @@ package com.mhb.xhook.xposed.apimonitor;
 
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 import com.mhb.xhook.xposed.apimonitor.ref.AccountManagerHook;
 import com.mhb.xhook.xposed.apimonitor.ref.ActivityManagerHook;
 import com.mhb.xhook.xposed.apimonitor.ref.ActivityThreadHook;
@@ -23,7 +23,7 @@ import com.mhb.xhook.xposed.apimonitor.ref.TelephonyManagerHook;
 
 public class ApiMonitorHookManager {
 
-    protected static final BasicLog LOG = XHookLogManager.getInstance();
+    protected static final BasicLog LOG = XhookLogManager.getInstance();
 
     private static ApiMonitorHookManager hookmger;
     private SmsManagerHook smsManagerHook;

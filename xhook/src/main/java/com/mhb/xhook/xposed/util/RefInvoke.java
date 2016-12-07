@@ -3,7 +3,7 @@ package com.mhb.xhook.xposed.util;
 
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 import com.mhb.xhook.xposed.hook.MethodHookCallBack;
 
 import java.lang.reflect.Constructor;
@@ -18,7 +18,7 @@ import de.robv.android.xposed.XposedHelpers;
 
 public class RefInvoke {
 
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
 
     public static Method findMethodExact(String className,
                                          ClassLoader classLoader,

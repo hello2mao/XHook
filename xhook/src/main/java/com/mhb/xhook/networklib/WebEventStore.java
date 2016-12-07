@@ -2,12 +2,12 @@ package com.mhb.xhook.networklib;
 
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 
 import java.util.regex.Pattern;
 
 public class WebEventStore {
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
 
     public static String eventTypeToString(int type) {
         String eventType = null;

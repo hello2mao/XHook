@@ -1,14 +1,14 @@
 package com.mhb.xhook.xposed.apimonitor;
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 import com.mhb.xhook.xposed.hook.HookParam;
 import com.mhb.xhook.xposed.hook.MethodHookCallBack;
 
 
 public abstract class AbstractBehaviorHookCallBack extends MethodHookCallBack {
 
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
 
     @Override
     public void beforeHookedMethod(HookParam param) {

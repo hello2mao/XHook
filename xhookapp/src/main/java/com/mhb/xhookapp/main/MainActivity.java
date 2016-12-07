@@ -19,7 +19,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void run() {
                 Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cmyip.com/"));
-                Xhook.withToken("mhb").start(getApplicationContext());
+                Xhook.withToken("mhb")
+                     .withLoggingEnabled(true)
+                     .withLogLevel(5)
+                     .withJavaHook(true)
+                     .withNativeHook(true)
+                     .start(getApplicationContext());
 
             }
         }).start();
@@ -38,7 +43,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                }
 //                String ip = NetUtil.GetNetIp("http://www.cmyip.com/");
                 Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cmyip.com/"));
-                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cnblogs.com/toSeeMyDream/p/5680007.html"));
+                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://blog.csdn.net/hello2mao"));
                 try {
                     Log.d("test", MainActivity.class.getMethod("onClick", View.class).toString());
                 } catch (NoSuchMethodException e) {

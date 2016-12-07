@@ -19,9 +19,9 @@ public class DeviceCheck {
     private static boolean isCheckedDeviceSupport = false;
     private static boolean isDeviceSupportable = false;
 
-    private static boolean isDalvikMode() {
+    public static boolean isDalvikMode() {
         String vmMode = getCurrentRuntimeValue();
-        if("Dalvik".equals(vmMode)){
+        if ("Dalvik".equals(vmMode)){
             return true;
         }        
         return false;
@@ -29,11 +29,9 @@ public class DeviceCheck {
     
     private static String getCurrentRuntimeValue() {
         try {
-            Class<?> systemProperties = Class
-                    .forName("android.os.SystemProperties");
+            Class<?> systemProperties = Class.forName("android.os.SystemProperties");
             try {
-                Method get = systemProperties.getMethod("get", String.class,
-                        String.class);
+                Method get = systemProperties.getMethod("get", String.class, String.class);
                 if (get == null) {
                     return "WTF?!";
                 }
@@ -64,7 +62,8 @@ public class DeviceCheck {
             return "SystemProperties class is not found";
         }
     }
-    
+
+    // TODO:
     private static boolean isSupportSDKVersion() {
         if (android.os.Build.VERSION.SDK_INT >= 14 && android.os.Build.VERSION.SDK_INT < 20) {
             return true;
@@ -95,14 +94,12 @@ public class DeviceCheck {
                 } catch (Exception e) {
                 }
             }
-
             if (ir != null) {
                 try {
                     ir.close();
                 } catch (Exception e) {
                 }
             }
-
             if (process != null) {
                 try {
                     process.destroy();
@@ -117,8 +114,9 @@ public class DeviceCheck {
     public static synchronized boolean isDeviceSupport(Context context) {
         // return memory checked value.
         try {
-            if (isCheckedDeviceSupport)
+            if (isCheckedDeviceSupport) {
                 return isDeviceSupportable;
+            }
 
             if (!isX86CPU() && !isYunOS()) {
                 isDeviceSupportable = true;
@@ -126,7 +124,8 @@ public class DeviceCheck {
                 isDeviceSupportable = false;
             }
         } finally {
-            Log.d("hotpatch", "device support is " + isDeviceSupportable + "checked" + isCheckedDeviceSupport);
+            Log.d("hotpatch", "device support is " + isDeviceSupportable
+                    + ", checked: " + isCheckedDeviceSupport);
             isCheckedDeviceSupport = true;
         }
         return isDeviceSupportable;
@@ -137,8 +136,7 @@ public class DeviceCheck {
         String s1 = null;
         String s2 = null;
         try {
-            Method m = Class.forName("android.os.SystemProperties").getMethod(
-                    "get", String.class);
+            Method m = Class.forName("android.os.SystemProperties").getMethod("get", String.class);
             s1 = (String) m.invoke(null, "ro.yunos.version");
             s2 = (String) m.invoke(null, "java.vm.name");
         } catch (NoSuchMethodException a) {
@@ -146,7 +144,8 @@ public class DeviceCheck {
         } catch (IllegalAccessException c) {
         } catch (InvocationTargetException d) {
         }
-        if ((s2 != null && s2.toLowerCase().contains("lemur")) || (s1 != null && s1.trim().length() > 0)) {
+        if ((s2 != null && s2.toLowerCase().contains("lemur"))
+                || (s1 != null && s1.trim().length() > 0)) {
             return true;
         } else {
             return false;

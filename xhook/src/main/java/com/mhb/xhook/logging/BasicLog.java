@@ -1,6 +1,10 @@
 package com.mhb.xhook.logging;
 
+import com.mhb.xhook.config.GlobalConfig;
+
 public interface BasicLog {
+
+    String TAG = GlobalConfig.CONF_TAG;
 
     int DEBUG = 5;
     int VERBOSE = 4;
@@ -19,4 +23,8 @@ public interface BasicLog {
     void error(String s);
 
     void error(String s, Throwable throwable);
+
+    int getLevel();
+
+    void setLevel(int i);
 }

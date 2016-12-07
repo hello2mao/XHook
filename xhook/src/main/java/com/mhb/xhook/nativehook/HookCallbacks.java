@@ -1,7 +1,7 @@
 package com.mhb.xhook.nativehook;
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 import com.mhb.xhook.util.ReflectionUtils;
 
 import java.io.FileDescriptor;
@@ -16,7 +16,7 @@ import okhttp3.internal.http.HttpEngine;
 
 public class HookCallbacks {
 
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
 
     public String victim(int a, long b, char c) {
         Object receiver = HookManager.retrieveReceiver(this, false);
@@ -65,11 +65,6 @@ public class HookCallbacks {
             }
             FileDescriptor fd = (FileDescriptor) field2.get(impl);
             LOG.debug("url=" + request.url() + ", fd=" + fd.toString());
-
-//            Field field2 = impl.getClass().getDeclaredField("fd");
-//            field2.setAccessible(true);
-//            FileDescriptor fd = (FileDescriptor) field2.get(impl);
-//            LOG.debug("fdddd" + fd.toString());
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

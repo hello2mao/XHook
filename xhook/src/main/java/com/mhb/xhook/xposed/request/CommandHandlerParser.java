@@ -1,7 +1,7 @@
 package com.mhb.xhook.xposed.request;
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 public class CommandHandlerParser {
 
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
 
     private static final String ACTION_NAME_KEY = "action";
     private static final String ACTION_TEST_CMD = "test_cmd";

@@ -1,8 +1,9 @@
 package com.mhb.xhook.nativehook;
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 import com.mhb.xhook.networklib.WebEventStore;
+import com.mhb.xhook.util.DeviceCheck;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,15 +14,15 @@ public class HookManager {
     public static final String LIB_VERSION = "1.0.0";
     private static boolean isLoadLibrary;
     private static int vmVersion = -1;
-    private static Class<?> sCallbackClass = null;
-    private static Map<String, Method> sMethodCache = new HashMap<>();
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static Class<?> callbackClass = null;
+    private static Map<String, Method> methodCache = new HashMap<>();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
 
     static {
         try {
             System.loadLibrary("xhooknative");
             isLoadLibrary = true;
-            LOG.debug("Load xhooknative success! LIB_VERSION = " + LIB_VERSION);
+            LOG.info("Load xhooknative success! LIB_VERSION = " + LIB_VERSION);
         } catch (UnsatisfiedLinkError unsatisfiedLinkError) {
             LOG.error("Nativie library not found! Please copy xhooknative into your project");
             isLoadLibrary = false;
@@ -30,27 +31,10 @@ public class HookManager {
             LOG.error("Failed to load library: " + t.getMessage());
         }
 
-        String lib = "";
-        try {
-            Class<?> properties = Class.forName("android.os.SystemProperties");
-            Method get = properties.getDeclaredMethod("get", String.class, String.class);
-            lib = (String) get.invoke(null, "persist.sys.dalvik.vm.lib", lib);
-        } catch (ClassNotFoundException e) {
-            LOG.error(e.toString());
-        } catch (NoSuchMethodException e) {
-            LOG.error(e.toString());
-        } catch (IllegalAccessException e) {
-            LOG.error(e.toString());
-        } catch (IllegalArgumentException e) {
-            LOG.error(e.toString());
-        } catch (InvocationTargetException e) {
-            LOG.error(e.toString());
-        }
-
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.KITKAT) {
+        if (DeviceCheck.isDalvikMode()) {
             // dalvik vm
-            LOG.debug("dalvik vm");
-        } else if (android.os.Build.VERSION.RELEASE.startsWith("4.4") && "libart.so".equals(lib)) {
+            LOG.debug("Dalvik vm");
+        } else if (android.os.Build.VERSION.RELEASE.startsWith("4.4") ) {
             vmVersion = 0;
             LOG.debug("ART 4.4");
         } else if (android.os.Build.VERSION.RELEASE.startsWith("5.0")) {
@@ -83,33 +67,33 @@ public class HookManager {
 
 
     public static void registerCallbackClass(Class<?> callback) {
-        if (sCallbackClass != null) {
+        if (callbackClass != null) {
             throw new RuntimeException("CallbackClass has been registered");
         }
-        sCallbackClass = callback;
+        callbackClass = callback;
     }
 
     public static void replaceMethod(Method origin, String proxy) {
-        if (sCallbackClass == null) {
+        if (callbackClass == null) {
             throw new NullPointerException("CallbackClass hasn't been registered yet");
         }
 
-        Method[] ms = sCallbackClass.getDeclaredMethods();
+        Method[] ms = callbackClass.getDeclaredMethods();
         for (Method m : ms) {
             if (m.getName().equals(proxy)) {
-                if (sMethodCache.get(proxy) != null) {
+                if (methodCache.get(proxy) != null) {
                     throw new IllegalArgumentException("hook " + proxy + " duplicated");
                 }
-                sMethodCache.put(proxy, m);
+                methodCache.put(proxy, m);
                 hookMethod(origin, m);
                 return;
             }
         }
-        throw new IllegalArgumentException("didn't find " + proxy + " in " + sCallbackClass);
+        throw new IllegalArgumentException("didn't find " + proxy + " in " + callbackClass);
     }
 
     public static Object invokeOrigin(String methodName, Object receiver, Object... args) {
-        Method m = sMethodCache.get(methodName);
+        Method m = methodCache.get(methodName);
         if (methodName == null) {
             throw new RuntimeException(methodName + " has not been used to hook, please verify");
         }

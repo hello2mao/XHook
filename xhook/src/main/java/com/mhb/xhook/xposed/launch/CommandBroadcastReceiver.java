@@ -5,13 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 import com.mhb.xhook.xposed.request.CommandHandler;
 import com.mhb.xhook.xposed.request.CommandHandlerParser;
 
 public class CommandBroadcastReceiver extends BroadcastReceiver {
 
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
     public static String INTENT_ACTION = "com.xhook.invoke";
     public static String TARGET_KEY = "target";
     public static String COMMAND_NAME_KEY = "cmd";

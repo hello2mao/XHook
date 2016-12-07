@@ -3,7 +3,7 @@ package com.mhb.xhook.xposed.launch;
 import android.content.pm.ApplicationInfo;
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 import com.mhb.xhook.xposed.collecter.ModuleContext;
 import com.mhb.xhook.xposed.util.XposedConfig;
 
@@ -16,7 +16,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 public class Launcher implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
     private static final String XPOSED_INSTALLER = "de.robv.android.xposed.installer";
 
 

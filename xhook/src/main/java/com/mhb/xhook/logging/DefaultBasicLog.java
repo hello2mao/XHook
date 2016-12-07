@@ -1,7 +1,5 @@
 package com.mhb.xhook.logging;
 
-import android.util.Log;
-
 import com.mhb.xhook.config.GlobalConfig;
 
 
@@ -9,27 +7,64 @@ public class DefaultBasicLog implements BasicLog {
 
     public static final String DEBUG_TAG = GlobalConfig.CONF_TAG;
 
+    private BasicLog impl;
+
+    public DefaultBasicLog() {
+        impl = new NullXhookLog();
+    }
+
+    public void setImpl(BasicLog impl) {
+        synchronized (this) {
+            this.impl = impl;
+        }
+    }
+
     public void debug(String message) {
-        Log.d(DEBUG_TAG, message);
+        synchronized (this) {
+            impl.debug(message);
+        }
     }
 
     public void info(String message) {
-        Log.i(DEBUG_TAG, message);
+        synchronized (this) {
+            impl.info(message);
+        }
     }
 
     public void verbose(String message) {
-        Log.v(DEBUG_TAG, message);
+        synchronized (this) {
+            impl.verbose(message);
+        }
     }
 
     public void warning(String message) {
-        Log.w(DEBUG_TAG, message);
+        synchronized (this) {
+            impl.warning(message);
+        }
     }
 
     public void error(String message) {
-        Log.e(DEBUG_TAG, message);
+        synchronized (this) {
+            impl.error(message);
+        }
     }
 
     public void error(String message, Throwable cause) {
-        Log.e(DEBUG_TAG, message, cause);
+        synchronized (this) {
+            impl.error(message, cause);
+        }
+    }
+
+    public int getLevel() {
+        synchronized (this) {
+            return impl.getLevel();
+        }
+
+    }
+
+    public void setLevel(int level) {
+        synchronized (this) {
+            impl.setLevel(level);
+        }
     }
 }

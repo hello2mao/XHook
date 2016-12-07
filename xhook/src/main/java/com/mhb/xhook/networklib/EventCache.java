@@ -2,7 +2,7 @@ package com.mhb.xhook.networklib;
 
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -16,7 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class EventCache {
 
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
     private static final long f = 1000L;
     private static final ScheduledExecutorService g
             = Executors.newSingleThreadScheduledExecutor();

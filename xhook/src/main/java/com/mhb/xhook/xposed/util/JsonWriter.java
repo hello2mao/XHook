@@ -1,7 +1,7 @@
 package com.mhb.xhook.xposed.util;
 
 import com.mhb.xhook.logging.BasicLog;
-import com.mhb.xhook.logging.XHookLogManager;
+import com.mhb.xhook.logging.XhookLogManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class JsonWriter {
 
-    private static final BasicLog LOG = XHookLogManager.getInstance();
+    private static final BasicLog LOG = XhookLogManager.getInstance();
 
     public static String parserInstanceToJson(Object data) throws Exception {
 
