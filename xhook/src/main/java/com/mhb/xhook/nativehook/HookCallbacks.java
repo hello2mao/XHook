@@ -17,22 +17,23 @@ import okhttp3.internal.http.HttpEngine;
 public class HookCallbacks {
 
     private static final BasicLog LOG = XhookLogManager.getInstance();
+    private static final HookManager HOOK_MANAGER = HookManager.getInstance();
 
     public String victim(int a, long b, char c) {
-        Object receiver = HookManager.retrieveReceiver(this, false);
+        Object receiver = HOOK_MANAGER.retrieveReceiver(this, false);
         LOG.debug("hook victim called: " + receiver + ", a=" + a + ", b=" + b + ", c=" + c);
 //        safe();
         // before
-        String result = (String) HookManager.invokeOrigin("victim", receiver, a, b, c);
+        String result = (String) HOOK_MANAGER.invokeOrigin("victim", receiver, a, b, c);
         // after
         return result + " SUCCESS";
     }
 
     public void writeRequestHeaders(Request request) throws IOException {
-        Object receiver = HookManager.retrieveReceiver(this, false);
+        Object receiver = HOOK_MANAGER.retrieveReceiver(this, false);
         LOG.debug("writeRequestHeaders called");
 //        LOG.debug("request: " + request.toString());
-        HookManager.invokeOrigin("writeRequestHeaders", receiver, request);
+        HOOK_MANAGER.invokeOrigin("writeRequestHeaders", receiver, request);
         Http1xStream httpStream = (Http1xStream)receiver;
 
         try {
@@ -45,7 +46,7 @@ public class HookCallbacks {
     }
 
     public void setHttpEngine(HttpEngine httpEngine) {
-        Object receiver = HookManager.retrieveReceiver(this, false);
+        Object receiver = HOOK_MANAGER.retrieveReceiver(this, false);
         LOG.debug("setHttpEngine called");
         try {
             Field field3 = httpEngine.getClass().getDeclaredField("networkRequest");
@@ -73,7 +74,7 @@ public class HookCallbacks {
             e.printStackTrace();
         }
 //        LOG.debug("socket: " + httpEngine.streamAllocation.connection().socket.get);
-        HookManager.invokeOrigin("setHttpEngine", receiver, httpEngine);
+        HOOK_MANAGER.invokeOrigin("setHttpEngine", receiver, httpEngine);
 
     }
 

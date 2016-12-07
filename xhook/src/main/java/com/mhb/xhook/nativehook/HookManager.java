@@ -1,5 +1,6 @@
 package com.mhb.xhook.nativehook;
 
+import com.mhb.xhook.config.GlobalConfig;
 import com.mhb.xhook.logging.BasicLog;
 import com.mhb.xhook.logging.XhookLogManager;
 import com.mhb.xhook.networklib.WebEventStore;
@@ -11,18 +12,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HookManager {
-    public static final String LIB_VERSION = "1.0.0";
+
     private static boolean isLoadLibrary;
     private static int vmVersion = -1;
     private static Class<?> callbackClass = null;
     private static Map<String, Method> methodCache = new HashMap<>();
     private static final BasicLog LOG = XhookLogManager.getInstance();
+    private volatile static HookManager instance = null;
 
     static {
         try {
             System.loadLibrary("xhooknative");
             isLoadLibrary = true;
-            LOG.info("Load xhooknative success! LIB_VERSION = " + LIB_VERSION);
+            LOG.info("Load xhooknative success! LIB_VERSION = " + GlobalConfig.LIB_VERSION);
         } catch (UnsatisfiedLinkError unsatisfiedLinkError) {
             LOG.error("Nativie library not found! Please copy xhooknative into your project");
             isLoadLibrary = false;
@@ -46,7 +48,22 @@ public class HookManager {
         }
     }
 
-    public static int getVmVersion() {
+
+
+    private HookManager() {}
+
+    public static HookManager getInstance() {
+        if (null == instance) {
+            synchronized (XhookLogManager.class) {
+                if (null == instance) {
+                    instance = new HookManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public int getVmVersion() {
         return vmVersion;
     }
 
@@ -66,14 +83,14 @@ public class HookManager {
     }
 
 
-    public static void registerCallbackClass(Class<?> callback) {
+    public void registerCallbackClass(Class<?> callback) {
         if (callbackClass != null) {
             throw new RuntimeException("CallbackClass has been registered");
         }
         callbackClass = callback;
     }
 
-    public static void replaceMethod(Method origin, String proxy) {
+    public void replaceMethod(Method origin, String proxy) {
         if (callbackClass == null) {
             throw new NullPointerException("CallbackClass hasn't been registered yet");
         }
@@ -92,7 +109,7 @@ public class HookManager {
         throw new IllegalArgumentException("didn't find " + proxy + " in " + callbackClass);
     }
 
-    public static Object invokeOrigin(String methodName, Object receiver, Object... args) {
+    public Object invokeOrigin(String methodName, Object receiver, Object... args) {
         Method m = methodCache.get(methodName);
         if (methodName == null) {
             throw new RuntimeException(methodName + " has not been used to hook, please verify");
@@ -113,7 +130,7 @@ public class HookManager {
         return null;
     }
 
-    public static Object retrieveReceiver(Object thiz, boolean isStatic) {
+    public Object retrieveReceiver(Object thiz, boolean isStatic) {
         if (isStatic) {
             return null;
         }
@@ -125,7 +142,7 @@ public class HookManager {
      * @param origin
      * @param proxy
      */
-    private static native void hookMethod(Method origin, Method proxy);
+    private native void hookMethod(Method origin, Method proxy);
 
     /**
      *
@@ -136,6 +153,7 @@ public class HookManager {
      * @param returnType
      * @return
      */
+    // TODO:static method
     private static native Object invokeDvmMethod(Method method, Object receiver, Object[] args,
                                                  Class<?>[] typeParameter, Class<?> returnType);
 

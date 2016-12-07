@@ -17,9 +17,8 @@ import okhttp3.internal.http.HttpEngine;
 
 public class Xhook {
 
-    public static final String VERSION = "1.0.0";
-    public static final String MINOR_VERSION = "1";
     private static final BasicLog LOG = XhookLogManager.getInstance();
+    private static final HookManager HOOK_MANAGER = HookManager.getInstance();
     private static boolean started = false;
     private boolean loggingEnabled;
     private int logLevel;
@@ -63,7 +62,7 @@ public class Xhook {
     public void start(Context context) {
         // 如果已经开启，将不再重复开启
         if (started) {
-            LOG.debug("Xhook " + Xhook.VERSION + "." + Xhook.MINOR_VERSION + " is already running.");
+            LOG.debug("Xhook " + GlobalConfig.VERSION + "." + GlobalConfig.MINOR_VERSION + " is already running.");
             return;
         }
         try {
@@ -79,7 +78,7 @@ public class Xhook {
 
             // Xhook init
             initialize(context);
-            LOG.info("Start Xhook " + Xhook.VERSION + "." + Xhook.MINOR_VERSION);
+            LOG.info("Start Xhook " + GlobalConfig.VERSION + "." + GlobalConfig.MINOR_VERSION);
             started = true;
         } catch (Throwable e) {
             LOG.error("Error occurred while starting the Xhook!", e);
@@ -92,17 +91,17 @@ public class Xhook {
         String packageName = context.getApplicationContext().getPackageName();
         String libPath = "/data/data/" + packageName + "/lib/" + GlobalConfig.LIB_NAME;
         LOG.debug("libPath=" + libPath);
-        new HookManager().initNativeHook(libPath, android.os.Build.VERSION.RELEASE, HookManager.getVmVersion());
-        HookManager.registerCallbackClass(HookCallbacks.class);
+        HOOK_MANAGER.initNativeHook(libPath, android.os.Build.VERSION.RELEASE, HOOK_MANAGER.getVmVersion());
+        HOOK_MANAGER.registerCallbackClass(HookCallbacks.class);
         try {
             Class<?> clazz = null;
             try {
                 // TODO: need to make sure class is loaded
                 clazz = Class.forName("okhttp3.internal.http.Http1xStream");
                 Method method = clazz.getDeclaredMethod("writeRequestHeaders", Request.class);
-                HookManager.replaceMethod(method, "writeRequestHeaders");
+                HOOK_MANAGER.replaceMethod(method, "writeRequestHeaders");
                 Method method2 = clazz.getDeclaredMethod("setHttpEngine", HttpEngine.class);
-                HookManager.replaceMethod(method2, "setHttpEngine");
+                HOOK_MANAGER.replaceMethod(method2, "setHttpEngine");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
