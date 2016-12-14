@@ -12,7 +12,6 @@ import com.mhb.xhook.nativehook.HookManager;
 
 import java.lang.reflect.Method;
 
-import okhttp3.Request;
 import okhttp3.internal.http.HttpEngine;
 
 public class Xhook {
@@ -98,10 +97,8 @@ public class Xhook {
             try {
                 // TODO: need to make sure class is loaded
                 clazz = Class.forName("okhttp3.internal.http.Http1xStream");
-                Method method = clazz.getDeclaredMethod("writeRequestHeaders", Request.class);
-                HOOK_MANAGER.replaceMethod(method, "writeRequestHeaders");
-                Method method2 = clazz.getDeclaredMethod("setHttpEngine", HttpEngine.class);
-                HOOK_MANAGER.replaceMethod(method2, "setHttpEngine");
+                Method method = clazz.getDeclaredMethod("setHttpEngine", HttpEngine.class);
+                HOOK_MANAGER.replaceMethod(method, "setHttpEngine");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }

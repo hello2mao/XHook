@@ -6,10 +6,9 @@ import android.view.View;
 
 import com.mhb.xhook.Xhook;
 import com.mhb.xhookapp.R;
-import com.mhb.xhookapp.base.activities.BaseActivity;
 import com.mhb.xhookapp.util.NetUtil;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends android.support.v4.app.FragmentActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +27,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             }
         }).start();
+        
     }
 
     @Override
@@ -43,7 +43,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                }
 //                String ip = NetUtil.GetNetIp("http://www.cmyip.com/");
                 Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://www.cmyip.com/"));
-                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://blog.csdn.net/hello2mao"));
+//                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("http://blog.csdn.net/hello2mao"));
+                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("https://www.baidu.com/s?wd=Huawei%20Google%20Nexus%206P&rsv_spt=1&rsv_iqid=0x86b34e2b00014f32&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=0&oq=Moto%20Nexus%206&rsv_t=dfe6gRy%2B1RZ%2BXSz%2Bp2VOyWpVI%2FYziTC%2FPpPFPJR%2F85rIbEeXV2IXUkfjRfetzCoAvlJt&inputT=2466&rsv_pq=ed9278320000f876&rsv_sug3=16&rsv_sug1=9&rsv_sug7=100&rsv_sug4=2623"));
+//                Log.d("test", "ip=" + NetUtil.GetNetIpWithOkHttp3("https://119.75.222.168/echo.fcgi"));
+
+
                 try {
                     Log.d("test", MainActivity.class.getMethod("onClick", View.class).toString());
                 } catch (NoSuchMethodException e) {

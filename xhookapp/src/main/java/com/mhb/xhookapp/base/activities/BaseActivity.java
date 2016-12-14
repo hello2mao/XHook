@@ -24,12 +24,12 @@ public abstract class BaseActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
     }
 
@@ -39,7 +39,7 @@ public abstract class BaseActivity extends Activity {
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onPause();
     }
 
