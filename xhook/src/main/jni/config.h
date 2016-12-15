@@ -22,6 +22,12 @@
  ************************************************************/
 #define JNIHOOK_CLASS "com/mhb/xhook/nativehook/HookManager"
 
+#define NOT_HOOK_JAVA -2
+#define DALVIK_VM -1
+#define ART_4_4 0
+#define ART_5_0 1
+#define ART_5_1 2
+
 /*************************************************************
  * hook_native
  ************************************************************/

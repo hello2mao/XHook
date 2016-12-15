@@ -12,6 +12,7 @@ import com.mhb.xhook.nativehook.HookManager;
 
 import java.lang.reflect.Method;
 
+import okhttp3.internal.http.Http1xStream;
 import okhttp3.internal.http.HttpEngine;
 
 public class Xhook {
@@ -90,21 +91,28 @@ public class Xhook {
         String packageName = context.getApplicationContext().getPackageName();
         String libPath = "/data/data/" + packageName + "/lib/" + GlobalConfig.LIB_NAME;
         LOG.debug("libPath=" + libPath);
-        HOOK_MANAGER.initNativeHook(libPath, android.os.Build.VERSION.RELEASE, HOOK_MANAGER.getVmVersion());
-        HOOK_MANAGER.registerCallbackClass(HookCallbacks.class);
-        try {
-            Class<?> clazz = null;
+        HOOK_MANAGER.initLib();
+        if (javaHook) {
+            HOOK_MANAGER.initNativeHook(libPath, android.os.Build.VERSION.RELEASE, HOOK_MANAGER.getVmVersion());
+            HOOK_MANAGER.registerCallbackClass(HookCallbacks.class);
             try {
-                // TODO: need to make sure class is loaded
-                clazz = Class.forName("okhttp3.internal.http.Http1xStream");
-                Method method = clazz.getDeclaredMethod("setHttpEngine", HttpEngine.class);
-                HOOK_MANAGER.replaceMethod(method, "setHttpEngine");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                Class<?> clazz = null;
+                try {
+                    // FIXME: make sure class is loaded
+                    Http1xStream tmp = new Http1xStream(null, null, null);
+                    clazz = Class.forName("okhttp3.internal.http.Http1xStream");
+                    Method method = clazz.getDeclaredMethod("setHttpEngine", HttpEngine.class);
+                    HOOK_MANAGER.replaceMethod(method, "setHttpEngine");
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } catch (NoSuchMethodException e) {
+                LOG.error(e.toString());
             }
-        } catch (NoSuchMethodException e) {
-            LOG.error(e.toString());
+        } else {
+            HOOK_MANAGER.initNativeHook(libPath, android.os.Build.VERSION.RELEASE, GlobalConfig.NOT_HOOK_JAVA);
         }
+
     }
 
 }

@@ -14,13 +14,26 @@ import java.util.Map;
 public class HookManager {
 
     private static boolean isLoadLibrary;
-    private static int vmVersion = -1;
+    private static int vmVersion = GlobalConfig.NOT_HOOK_JAVA;
     private static Class<?> callbackClass = null;
     private static Map<String, Method> methodCache = new HashMap<>();
     private static final BasicLog LOG = XhookLogManager.getInstance();
     private volatile static HookManager instance = null;
 
-    static {
+    private HookManager() {}
+
+    public static HookManager getInstance() {
+        if (null == instance) {
+            synchronized (HookManager.class) {
+                if (null == instance) {
+                    instance = new HookManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void initLib() {
         try {
             System.loadLibrary("xhooknative");
             isLoadLibrary = true;
@@ -35,32 +48,18 @@ public class HookManager {
 
         if (DeviceCheck.isDalvikMode()) {
             // dalvik vm
+            vmVersion = GlobalConfig.DALVIK_VM;
             LOG.debug("Dalvik vm");
         } else if (android.os.Build.VERSION.RELEASE.startsWith("4.4") ) {
-            vmVersion = 0;
+            vmVersion = GlobalConfig.ART_4_4;
             LOG.debug("ART 4.4");
         } else if (android.os.Build.VERSION.RELEASE.startsWith("5.0")) {
-            vmVersion = 1;
+            vmVersion = GlobalConfig.ART_5_0;
             LOG.debug("ART 5.0");
         } else if (android.os.Build.VERSION.RELEASE.startsWith("5.1")) {
-            vmVersion = 2;
+            vmVersion = GlobalConfig.ART_5_1;
             LOG.debug("ART 5.1");
         }
-    }
-
-
-
-    private HookManager() {}
-
-    public static HookManager getInstance() {
-        if (null == instance) {
-            synchronized (XhookLogManager.class) {
-                if (null == instance) {
-                    instance = new HookManager();
-                }
-            }
-        }
-        return instance;
     }
 
     public int getVmVersion() {
@@ -102,6 +101,7 @@ public class HookManager {
                     throw new IllegalArgumentException("hook " + proxy + " duplicated");
                 }
                 methodCache.put(proxy, m);
+                LOG.debug("Try to hook Method, origin: " + origin.toString() + ", proxy: " + proxy);
                 hookMethod(origin, m);
                 return;
             }
@@ -118,14 +118,15 @@ public class HookManager {
             return invokeDvmMethod(m, receiver, args, m.getParameterTypes(), m.getReturnType());
         }
         try {
+            // FIXME: will not call origin
             m.setAccessible(true);
             return m.invoke(receiver, args);
         } catch (IllegalAccessException e) {
-            LOG.debug(e.toString());
+            e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            LOG.debug(e.toString());
+            e.printStackTrace();
         } catch (InvocationTargetException e) {
-            LOG.debug(e.toString());
+            e.printStackTrace();
         }
         return null;
     }

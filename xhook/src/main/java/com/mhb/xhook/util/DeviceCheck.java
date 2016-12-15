@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import com.mhb.xhook.logging.BasicLog;
+import com.mhb.xhook.logging.XhookLogManager;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
@@ -15,11 +18,16 @@ public class DeviceCheck {
     private static final String LIB_DALVIK = "libdvm.so";
     private static final String LIB_ART = "libart.so";
     private static final String LIB_ART_D = "libartd.so";
+    private static final BasicLog LOG = XhookLogManager.getInstance();
+
 
     private static boolean isCheckedDeviceSupport = false;
     private static boolean isDeviceSupportable = false;
 
     public static boolean isDalvikMode() {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.KITKAT) {
+            return true;
+        }
         String vmMode = getCurrentRuntimeValue();
         if ("Dalvik".equals(vmMode)){
             return true;
@@ -36,9 +44,9 @@ public class DeviceCheck {
                     return "WTF?!";
                 }
                 try {
+                    // FIXME: has some problem
                     final String value = (String) get.invoke(systemProperties,
-                            SELECT_RUNTIME_PROPERTY,
-                            /* Assuming default is */"Dalvik");
+                            SELECT_RUNTIME_PROPERTY,"");
                     if (LIB_DALVIK.equals(value)) {
                         return "Dalvik";
                     } else if (LIB_ART.equals(value)) {
@@ -49,18 +57,19 @@ public class DeviceCheck {
 
                     return value;
                 } catch (IllegalAccessException e) {
-                    return "IllegalAccessException";
+                    e.printStackTrace();
                 } catch (IllegalArgumentException e) {
-                    return "IllegalArgumentException";
+                    e.printStackTrace();
                 } catch (InvocationTargetException e) {
-                    return "InvocationTargetException";
+                    e.printStackTrace();
                 }
             } catch (NoSuchMethodException e) {
-                return "SystemProperties.get(String key, String def) method is not found";
+                e.printStackTrace();
             }
         } catch (ClassNotFoundException e) {
-            return "SystemProperties class is not found";
+            e.printStackTrace();
         }
+        return "";
     }
 
     // TODO:

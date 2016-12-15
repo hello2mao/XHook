@@ -13,6 +13,7 @@
 
 // Support version：
 // (1)android 4.4
+// (2)android 4.3
 int xhook_getaddrinfo(const char *, const char *, const struct addrinfo *, struct addrinfo **);
 HOOK_INFO hook_info_getaddrinfo = {{}, "libc.", "getaddrinfo", xhook_getaddrinfo, xhook_getaddrinfo};
 int xhook_getaddrinfo(const char *hostname, const char *servname, const struct addrinfo *hints,
@@ -31,7 +32,6 @@ int xhook_getaddrinfo(const char *hostname, const char *servname, const struct a
     // InetAddress.java#getAllByNameImpl
     // (1)parseNumericAddressNoThrow
     // (2)lookupHostByName
-    // TODO:
     if ((hints != NULL) && (hints->ai_socktype == SOCK_STREAM)
         && (hints->ai_flags == AI_ADDRCONFIG)) {
         LOGD("<dns>hostname=%s, servname=%s, ai_family=%d, ai_socktype=%d, ai_flags=0x%X, ai_protocol=%d",

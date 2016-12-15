@@ -42,13 +42,18 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved) {
 }
 
 void hook_java_init(JNIEnv* env, jint version) {
-    if ((int) version < 0) {
+    if ((int) version == NOT_HOOK_JAVA) {
+        LOGI("Java hook not enabled");
+        return;
+    } else if ((int) version == DALVIK_VM) {
         LOGD("Java hook, Dalvik mode");
         dvm_jni_onload(env);
     } else {
         LOGD("Java hook, ART mode");
+        // FIXME: not work
         art_jni_onload(env, (int)version);
     }
+    LOGD("Init Java Hook sucess!");
 }
 
 /**
@@ -134,15 +139,6 @@ bool init_hook_func_list(const char *ver) {
     int num = get_android_version(ver);
     switch (num) {
         case ANDROID_4_3:
-            // TODO:
-            strcpy(hook_func_list[0], "hook_info_getaddrinfo");
-            strcpy(hook_func_list[1], "hook_info_socket");
-            strcpy(hook_func_list[2], "hook_info_connect");
-            strcpy(hook_func_list[3], "hook_info_poll");
-            strcpy(hook_func_list[4], "hook_info_recvfrom");
-            strcpy(hook_func_list[5], "hook_info_sendto");
-            strcpy(hook_func_list[6], "hook_info_SSL_do_handshake");
-            break;
         case ANDROID_4_4:
             // TODO:
             strcpy(hook_func_list[0], "hook_info_getaddrinfo");
@@ -152,6 +148,8 @@ bool init_hook_func_list(const char *ver) {
             strcpy(hook_func_list[4], "hook_info_recvfrom");
             strcpy(hook_func_list[5], "hook_info_sendto");
             strcpy(hook_func_list[6], "hook_info_SSL_do_handshake");
+            strcpy(hook_func_list[7], "hook_info_SSL_read");
+            strcpy(hook_func_list[8], "hook_info_SSL_write");
             break;
         case ANDROID_NOT_SUPPORT:
             return false;

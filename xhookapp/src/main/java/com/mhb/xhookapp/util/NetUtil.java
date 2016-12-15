@@ -1,5 +1,7 @@
 package com.mhb.xhookapp.util;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,6 +80,7 @@ public class NetUtil {
 
             if (response.isSuccessful()) {
                 String strber = response.body().string();
+                Log.d("test", "res="+strber);
                 Pattern pattern = Pattern
                         .compile("((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.)" +
                                 "{3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))");

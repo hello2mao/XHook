@@ -20,6 +20,7 @@ public class HookCallbacks {
     private static final HookManager HOOK_MANAGER = HookManager.getInstance();
 
     public void setHttpEngine(HttpEngine httpEngine) {
+        LOG.debug("In proxy: setHttpEngine");
         Object receiver = HOOK_MANAGER.retrieveReceiver(this, false);
         HOOK_MANAGER.invokeOrigin("setHttpEngine", receiver, httpEngine);
         LOG.debug("setHttpEngine called");

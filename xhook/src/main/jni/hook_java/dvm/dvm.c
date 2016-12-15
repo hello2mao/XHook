@@ -8,6 +8,7 @@ static int gInsSize = 14;
 static int gMethodSize = 60;
 
 static void dvm_doHook(void *origin, void *proxy) {
+    LOGD("dvm_doHook");
     int *ori_code_item = (int *)(origin + gInsns);
     int *pro_code_item = (int *)(proxy + gInsns);
     int code_temp = *ori_code_item;
@@ -38,6 +39,10 @@ static void dvm_doHook(void *origin, void *proxy) {
 static void hook_method(JNIEnv* env, jobject thiz, jobject method_origin, jobject method_proxy) {
     jmethodID meth_ori = (*env)->FromReflectedMethod(env, method_origin);
     jmethodID meth_pro = (*env)->FromReflectedMethod(env, method_proxy);
+    if (meth_ori == NULL || meth_pro == NULL || meth_ori == meth_pro) {
+        LOGE("FromReflectedMethod failed");
+    }
+    LOGD("meth_ori=0x%x, meth_pro=0x%x\n", (int)meth_ori, (int)meth_pro);
     dvm_doHook(meth_ori, meth_pro);
 }
 

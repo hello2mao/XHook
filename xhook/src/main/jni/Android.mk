@@ -10,6 +10,8 @@ HOOKS += hook_native/hooks/hook_poll.c
 HOOKS += hook_native/hooks/hook_sendto.c
 HOOKS += hook_native/hooks/hook_recvfrom.c
 HOOKS += hook_native/hooks/hook_ssl_do_handshake.c
+HOOKS += hook_native/hooks/hook_ssl_read.c
+HOOKS += hook_native/hooks/hook_ssl_write.c
 LOCAL_SRC_FILES += \
     hook_native/base/hook.c\
     hook_native/base/util.c\
